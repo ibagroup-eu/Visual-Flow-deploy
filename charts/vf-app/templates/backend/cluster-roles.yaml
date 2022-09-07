@@ -1,0 +1,214 @@
+{{- if .Values.backend }}
+{{- $partName := "backend" }}
+{{- with .Values.backend }}
+{{- if .createRoles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-viewer-rules
+  labels:
+    name: vf-viewer-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-aggregate-to-viewer: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources: 
+      - "namespaces"
+      - "resourcequotas"
+      - "configmaps"
+      - "pods"
+      - "pods/log"
+      - "pods/status"
+      - "secrets"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
+      - "argoproj.io"
+    resources:
+      - "workflows"
+      - "workflowtemplates"
+      - "cronworkflows"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - "rolebindings"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-viewer
+  labels:
+    name: vf-viewer
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vf-aggregate-to-viewer: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-operator-rules
+  labels:
+    name: vf-operator-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-aggregate-to-operator: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "pods"
+    verbs:
+      - "delete"
+      - "create"
+  - apiGroups:
+      - ""
+    resources:
+      - "pods/exec"
+    verbs:
+      - "create"
+      - "get"
+  - apiGroups:
+      - "argoproj.io"
+    resources:
+      - "workflows"
+    verbs:
+      - "create"
+      - "delete"
+      - "update"
+      - "patch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-operator
+  labels:
+    name: vf-operator
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vf-aggregate-to-viewer: "true"
+    - matchLabels:
+        vf-aggregate-to-operator: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-editor-rules
+  labels:
+    name: vf-editor-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-aggregate-to-editor: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "namespaces"
+    verbs:
+      - "update"
+      - "patch"
+  - apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+      - "secrets"
+      - "resourcequotas"
+    verbs:
+      - "update"
+      - "patch"
+      - "create"
+      - "delete"
+  - apiGroups:
+      - "argoproj.io"
+    resources:
+      - "workflowtemplates"
+      - "cronworkflows"
+    verbs:
+      - "create"
+      - "delete"
+      - "update"
+      - "patch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-editor
+  labels:
+    name: vf-editor
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vf-aggregate-to-viewer: "true"
+    - matchLabels:
+        vf-aggregate-to-operator: "true"
+    - matchLabels:
+        vf-aggregate-to-editor: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-admin-rules
+  labels:
+    name: vf-admin-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-aggregate-to-admin: "true"
+rules:
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - "rolebindings"
+    verbs:
+      - "create"
+      - "delete"
+      - "update"
+      - "patch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vf-admin
+  labels:
+    name: vf-admin
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vf-aggregate-to-viewer: "true"
+    - matchLabels:
+        vf-aggregate-to-operator: "true"
+    - matchLabels:
+        vf-aggregate-to-editor: "true"
+    - matchLabels:
+        vf-aggregate-to-admin: "true"
+rules: []
+{{- end }}
+{{- end }}
+{{- end }}

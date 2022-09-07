@@ -1,0 +1,19 @@
+{{- if .Values.frontend }}
+{{- $partName := "frontend" }}
+{{- with .Values.frontend }}
+{{- if .deployment.variables }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+data:
+  {{- range $key, $val := .deployment.variables }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

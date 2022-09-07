@@ -1,0 +1,29 @@
+{{- if .Values.backend }}
+{{- $partName := "backend" }}
+{{- with .Values.backend }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  {{- if .service.annotations }}
+  annotations: {{ toYaml .service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .service.type }}
+  selector:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  ports:
+  - name: https
+    port: {{ .service.port }}
+    targetPort: https
+    {{- if .service.nodePort }}
+    nodePort: {{ .service.nodePort }}
+    {{- end }}
+{{- end }}
+{{- end }}

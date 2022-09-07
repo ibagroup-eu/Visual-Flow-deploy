@@ -1,0 +1,6 @@
+apiVersion: v2
+name: vf-secrets
+description: Visual Flow Secrets
+type: application
+version: 1.0.0
+appVersion: 1.0.0
