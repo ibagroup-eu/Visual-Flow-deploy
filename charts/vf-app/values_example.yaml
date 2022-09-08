@@ -11,7 +11,7 @@ backend:
   deployment:
     replicas: 1
     image:
-      repository: ibagomel/visual-flow-backend
+      repository: ibagroup-eu/visual-flow-backend
       tag: latest
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -47,14 +47,14 @@ backend:
         cpu: 0.1
         memory: 64Mi
     sparkJob:
-      repository: ibagomel/visual-flow-spark-job
+      repository: ibagroup-eu/visual-flow-spark-job
       tag: latest
       jobSA: vf-spark-job
       jobRB: vf-spark-job-edit
       addSA: true
       # kubernetesAPI: "k8s://https://kubernetes.default.svc"
     slackJob:
-      repository: ibagomel/visual-flow-slack-notification
+      repository: ibagroup-eu/visual-flow-slack-notification
       tag: latest 
       appAPItoken: "${SLACK_API_TOKEN}"
   service:
@@ -79,7 +79,7 @@ frontend: # frontend part of app
   deployment:
     replicas: 1
     image:
-      repository: ibagomel/visual-flow-frontend
+      repository: ibagroup-eu/visual-flow-frontend
       tag: latest
       pullPolicy: IfNotPresent
     # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
