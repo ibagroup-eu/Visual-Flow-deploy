@@ -44,6 +44,9 @@ data:
       prefix: {{ default "${namespace.label}-" .configFile.namespace.prefix }}
       {{- if .configFile.namespace.annotations }}
       annotations: {{- toYaml .configFile.namespace.annotations | nindent 8 }}
+    pvc:
+      memory: {{ default "1Gi" .configFile.pvc.memory }}
+      mountPath: {{ default "/files"  .configFile.pvc.mountPath }} 
       {{- end }}
     job:
       imagePullSecret: {{ $.Values.imagePullSecret }}
@@ -56,5 +59,15 @@ data:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}
     argo: {{- toYaml .configFile.argo | nindent 6 }}
+    {{- if .configFile.redis }}
+    redis:
+      host: {{ .configFile.redis.host }}
+      port: {{ .configFile.redis.port }}
+      {{- if .configFile.redis }}
+      username: {{ .configFile.redis.username }}
+      {{- end }}
+      password: {{ .configFile.redis.password }}
+      database: {{ .configFile.redis.database }}
+    {{- end }}    
 {{- end }}
 {{- end }}

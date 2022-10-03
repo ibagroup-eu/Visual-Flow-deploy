@@ -11,7 +11,7 @@ backend:
   deployment:
     replicas: 1
     image:
-      repository: ibagroup-eu/visual-flow-backend
+      repository: ibagomel/visual-flow-backend
       tag: latest
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -31,6 +31,25 @@ backend:
         email: email
     superusers:
       - <username>
+    notifications:
+      slack:
+        botToken: BOT_TOKEN
+        channelName: CHANNEL_NAME
+      mail:
+        default-encoding: UTF-8                       # Default-encoding
+        host: smtp.gmail.com                          # An IP address or FQDN of the SMTP server
+        username: EMAIL                               # The user name that will be used to connect to the SMTP server.
+        password: APP_PASSWORD                        # The password of the SMTP user
+        port: 587                                     # Usually 465 or 587.
+        properties:
+          mail:
+            debug: false
+          smtp:
+            debug: false
+            auth: true
+            starttls: true
+        protocol: smtp
+        test-connection: false
     namespace:
       label: vf-app
       prefix: "${namespace.label}-"
@@ -38,6 +57,9 @@ backend:
       #   "[openshift.io/sa.scc.mcs]": "s0:c25,c20"
       #   "[openshift.io/sa.scc.supplemental-groups]": "1000/10000"
       #   "[openshift.io/sa.scc.uid-range]": "1000/10000"
+    pvc:
+      memory: 1Gi
+      mountPath: "/files" 
     argo:
       serverUrl: "http://argo-server.<namespace>.svc:2746"
       limits:
@@ -46,15 +68,21 @@ backend:
       requests:
         cpu: 0.1
         memory: 64Mi
+    redis:
+	    host: okd4w1.okd.gomel.iba.by
+        port: 31380
+        #  username: ${REDIS_USER}
+        password: yourpasswd
+        database: 1
     sparkJob:
-      repository: ibagroup-eu/visual-flow-spark-job
+      repository: ibagomel/visual-flow-spark-job
       tag: latest
       jobSA: vf-spark-job
       jobRB: vf-spark-job-edit
       addSA: true
       # kubernetesAPI: "k8s://https://kubernetes.default.svc"
     slackJob:
-      repository: ibagroup-eu/visual-flow-slack-notification
+      repository: ibagomel/visual-flow-slack-notification
       tag: latest 
       appAPItoken: "${SLACK_API_TOKEN}"
   service:
@@ -79,7 +107,7 @@ frontend: # frontend part of app
   deployment:
     replicas: 1
     image:
-      repository: ibagroup-eu/visual-flow-frontend
+      repository: ibagomel/visual-flow-frontend
       tag: latest
       pullPolicy: IfNotPresent
     # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
