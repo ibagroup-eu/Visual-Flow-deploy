@@ -1,0 +1,26 @@
+{{- if .Values.dbservice }}
+{{- $partName := "dbservice" }}
+{{- with .Values.dbservice }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  {{- if .service.annotations }}
+  annotations: {{ toYaml .service.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .service.type }}
+  selector:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  ports:
+  - name: http
+    port: {{ .service.port }}
+    targetPort: http
+{{- end }}
+{{- end }}

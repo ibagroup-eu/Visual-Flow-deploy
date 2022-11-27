@@ -61,13 +61,17 @@ backend:
       memory: 1Gi
       mountPath: "/files" 
     argo:
-      serverUrl: "http://argo-server.<namespace>.svc:2746"
+      serverUrl: "http://argo-workflows-server.<namespace>.svc:2746"
       limits:
         cpu: 0.5
         memory: 512Mi
       requests:
         cpu: 0.1
         memory: 64Mi
+      ttlStrategy:
+        secondsAfterCompletion: 5
+        secondsAfterSuccess: 5
+        secondsAfterFailure: 360
     redis:
 	    host: okd4w1.okd.gomel.iba.by
         port: 31380
@@ -140,3 +144,19 @@ frontend: # frontend part of app
       # termination: Reencrypt
       # additionalFields:
       #   insecureEdgeTerminationPolicy: Redirect
+dbservice:
+  deployment:
+    replicas: 1
+    image:
+      repository: image-registry.openshift-image-registry.svc:5000/vf-dev/vf-backend-db
+      tag: latest
+      pullPolicy: IfNotPresent
+    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
+  service:
+    type: ClusterIP
+    port: 9999
+  external:
+    enabled: true
+    type: route
+    host: "vf-prod-dbservice"
+    defaultdns: apps.okd4.okd.gomel.iba.by  

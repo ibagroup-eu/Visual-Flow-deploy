@@ -27,6 +27,8 @@ data:
       error:
         include-message: always
         include-binding-errors: always
+    db-service:
+      host: http://vf-prod-dbservice.apps.okd4.okd.gomel.iba.by/    
     oauth:
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
@@ -67,7 +69,9 @@ data:
       username: {{ .configFile.redis.username }}
       {{- end }}
       password: {{ .configFile.redis.password }}
-      database: {{ .configFile.redis.database }}
+      jobHistoryDatabase: 3
+      pipelineHistoryDatabase: 3
+      logDatabase: 3
     {{- end }}    
 {{- end }}
 {{- end }}
