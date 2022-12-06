@@ -1,0 +1,114 @@
+# see description of parameters in ./README.md file.
+project: visual-flow
+imagePullSecret: vf-image-pull
+
+# backend part of app
+backend:
+  createRoles: true
+  serviceAccount: 
+    name: vf-app-backend-user
+    addSA: true
+  deployment:
+    replicas: 1
+    image:
+      repository: ibagomel/vf-backend
+      tag: latest
+      pullPolicy: IfNotPresent
+    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
+    # variables:
+    secretVariables:
+      KEYSTORE_PASS: "<PASS>" 
+      SLACK_API_TOKEN: "<TOKEN>"
+    sslSecret: vf-backend-ssl
+    # resources: {}
+  configFile:
+    oauth:
+      userInfo: "https://api.github.com/user" # "https://<GITLAB_URL>/api/v4/user"
+      fieldsMap:
+        id: id
+        username: login # username
+        name: name
+        email: email
+    superusers:
+      - <username>
+    namespace:
+      label: vf-app
+      prefix: "${namespace.label}-"
+      # annotations:
+      #   "[openshift.io/sa.scc.mcs]": "s0:c25,c20"
+      #   "[openshift.io/sa.scc.supplemental-groups]": "1000/10000"
+      #   "[openshift.io/sa.scc.uid-range]": "1000/10000"
+    argo:
+      serverUrl: "http://argo-server.<namespace>.svc:2746"
+      limits:
+        cpu: 0.5
+        memory: 512Mi
+      requests:
+        cpu: 0.1
+        memory: 64Mi
+    sparkJob:
+      repository: ibagomel/vf-spark-job
+      tag: latest
+      jobSA: vf-spark-job
+      jobRB: vf-spark-job-edit
+      addSA: true
+      # kubernetesAPI: "k8s://https://kubernetes.default.svc"
+    slackJob:
+      repository: ibagomel/vf-slack-job
+      tag: latest 
+      appAPItoken: "${SLACK_API_TOKEN}"
+  service:
+    type: ClusterIP
+    port: 8080
+    # nodePort:
+    annotations:
+      # service.beta.openshift.io/serving-cert-secret-name: vf-backend-ssl
+  subPath: "/vf/be"
+  external:
+    enabled: true
+    type: ingress # route
+    host: <be_hostname>
+    annotations:
+      # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    ssl:
+      # termination: reencrypt
+      # additionalFields:
+      #   insecureEdgeTerminationPolicy: Redirect
+
+frontend: # frontend part of app
+  deployment:
+    replicas: 1
+    image:
+      repository: ibagomel/vf-frontend
+      tag: latest
+      pullPolicy: IfNotPresent
+    # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
+    variables:
+      API_SERVER: "https://<be_hostname>/be/"
+      STRATEGY_CALLBACK_URL: "https://<fe_hostname>/ui/callback"
+      STRATEGY_BASE_URL: "https://github.com"
+    secretVariables:
+      GITLAB_APP_ID: |-
+        <APP_ID>
+      GITLAB_APP_SECRET: |-
+        <APP_ID>
+      SESSION_SECRET: "<SOME_RANDOM_STRING>"
+    sslSecret: vf-frontend-ssl
+    # resources: {}
+  service:
+    type: ClusterIP
+    port: 8888
+    # nodePort:
+    annotations:
+      # service.beta.openshift.io/serving-cert-secret-name: vf-frontend-ssl
+  subPath: "/vf/ui/"
+  external:
+    enabled: true
+    type: ingress # route
+    host: <fe_hostname>
+    annotations:
+      # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+    ssl:
+      # termination: Reencrypt
+      # additionalFields:
+      #   insecureEdgeTerminationPolicy: Redirect

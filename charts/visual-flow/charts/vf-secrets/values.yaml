@@ -1,0 +1,115 @@
+project: visual-flow
+
+secrets:
+  - name: vf-image-pull
+    app: vf-app
+    type: kubernetes.io/dockerconfigjson
+    stringData:
+      .dockerconfigjson: |-
+        {"auths": {}}
+  - name: vf-app-backend-ssl
+    app: vf-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDEzCCAfugAwIBAgIUO0bDDegssBCj5ME3Eyewf8rH/XUwDQYJKoZIhvcNAQEL
+        BQAwGTEXMBUGA1UEAwwOdmYtYXBwLWJhY2tlbmQwHhcNMjEwNDI5MDgxMDUwWhcN
+        MjIwNDI5MDgxMDUwWjAZMRcwFQYDVQQDDA52Zi1hcHAtYmFja2VuZDCCASIwDQYJ
+        KoZIhvcNAQEBBQADggEPADCCAQoCggEBANHMDuDvIYsSLWFTtSNQ0ZHVSQKu4ELx
+        ZTahnYtRO9jnRa9IGqpL4rf1iHZafjw0u4o0seJx5ScwCRN6NHxMbbhh3VEzTf8a
+        IKctZEfxYZBgH9aIXl3lUih7tp9bSQXUDBaXcgAK0z5vJqB+RPWHA6hvxcrwdxLM
+        UY+TwuTIZWoShCQaI+GYnuDSXlqLcOrWl9xxDGzSWbA5Deuj9ly6Zap6K4Grl09P
+        cU5NcrUDX2vvDzt9Pzl2hw3z/5tOR+YTFezbrEBD/YCeYnkJVg9GtifMoDnc6SPc
+        r8/CmsgNd0ZbZZQ4dsTrmPFyxDe3kQ1GbMe7a5DjufOQQ3i96ShHJUECAwEAAaNT
+        MFEwHQYDVR0OBBYEFGhwbE0EtfXp7/RDULaPzwnOXsgIMB8GA1UdIwQYMBaAFGhw
+        bE0EtfXp7/RDULaPzwnOXsgIMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEL
+        BQADggEBADVfrXvhYA6DiNzgzojh7sIgOIYNpWhudu2ca0sLMrvWuNoIUKQlrsgT
+        LL4gsFfe4HQI5BQG7SfXOurM9PcAMANbJmXhYHYz95gk4t7YLDjYqQdO0o1dk/U8
+        CNR+Tto4mUKhWdcZYva0ILvJqL9OANvbxkIh4yTNe4MBtcbBZt6NUiC89qYxwkkj
+        S13Kqpyw0et/PfylAqBBkCIs/UqbISIfSBIi+WeP+klfpNx2reCppQgWw4iW4Vk6
+        brfJ/AruAR6e1yeqgTiF+kvNyzL9MG+4q6USOUl1oPA6ec2Vk9alFXxrWf+4auXz
+        j27qDhpfZsuIQBuwLebvpl+MUjA2qWU=
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN PRIVATE KEY-----
+        MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDRzA7g7yGLEi1h
+        U7UjUNGR1UkCruBC8WU2oZ2LUTvY50WvSBqqS+K39Yh2Wn48NLuKNLHiceUnMAkT
+        ejR8TG24Yd1RM03/GiCnLWRH8WGQYB/WiF5d5VIoe7afW0kF1AwWl3IACtM+byag
+        fkT1hwOob8XK8HcSzFGPk8LkyGVqEoQkGiPhmJ7g0l5ai3Dq1pfccQxs0lmwOQ3r
+        o/ZcumWqeiuBq5dPT3FOTXK1A19r7w87fT85docN8/+bTkfmExXs26xAQ/2AnmJ5
+        CVYPRrYnzKA53Okj3K/PwprIDXdGW2WUOHbE65jxcsQ3t5ENRmzHu2uQ47nzkEN4
+        vekoRyVBAgMBAAECggEAJqRGLUn+TKY5c46+c1XEc+7r9rGNHudldA2KfgmlU0st
+        u541Qx6dELMJwnrie2ZfEJKqHQJLac9gLJU6q5ZMM0TbRcSEXjNKxmAG83VTOgtq
+        cdJGR1cgrdIzjeB7b7Zhz5tvZPCZfgts+uym+O44T0LfFIT7+ZtmfmKB6C+89i9D
+        Rhd11rTv+ZM4Dqawg1W2hOhkNEL/OGLXyXG5lfD8RmS6adG1yH9aseFRgRVAPNLW
+        /LPU2u+6VH/J/62xAvik1kRQ3Pd8wTFqzh95IBNwYBQ5A8U6wOTCkF2ObRLPVQdB
+        CWp+SPPUjdqciTk+OXg7ZKQBQTbzDynS1XLITXoF0QKBgQD6OKKKocZXgsRppfYp
+        LygLyiC5DPyN6DYNyMRS+FSkYxWpuhOrhrAsl7gk+EyWvbcStd0/HOn24Tew3/CY
+        M9Zm2UvlcVCUZoERGPVzctnbfyNB5hZ65WK6OY+O0+G6bPnYMgFLsGfOLgCmiFt7
+        twcmDDwZzwu/0iywWgreysSvFQKBgQDWpG0v4pivXB7YWm8U1XHPmvqkwZldWAht
+        Eys+XXNNXrMxMw0PeNtC59Pb0j7DCaTki6xPdHxVYbtB/00hKlgsX9JjQLPK+6gJ
+        2djmoP6ABtU+2t0s8UTYXBDtfGe0dErAoPrA4gmlMJldCU6Qfzt2ODDqiK8lacuJ
+        IBCX9vEIfQKBgGwhR1SDXnP4xaomFv9rKnIV0hhF3WnxnFJOnVCBkgpL61OiXtez
+        57QNiH0pc+d8an3Ca67Xbt/KKcfcrlsHo7JkWuD3G+xVc5cQ4xkV28F36qOSq8pG
+        EGkLcNc3BwgKCdn8mgS8Yc9+n7dXm7kVuhgeF2bLy3cEe11mO+ZVV7OVAoGAEMFt
+        NJu/x5CtZ75HhZzT8ZzrjAkA6+R/Y+RnL8sjwRpvapvNnTOWCjcGttZGx/rswFqW
+        7Ozu98tVTuWbI8emcnBYgB8A6guTJpG2+OoAdAYUh3+WXHfJJAqr154qik+5tifa
+        60u57QdKMZUUaPtFrQjd6LEa2xTTKrUyFmrUjhECgYBiGIycTPNifo5WYUKZeBZP
+        CE7jbr6/r37n9EyihOif3z5WydSx/HuLjpBfKwbDbwG/DkILE0eTs2o1e+5n1kMY
+        ces+X1Alwxj1ORd8tQr0/O6qhpFL0F5pxc2kq6J/0+Naz1HU9lWOUmgrPIN51++b
+        1duiEoAcnnZoChxJhFHJkw==
+        -----END PRIVATE KEY-----
+  - name: vf-app-frontend-ssl
+    app: vf-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDFTCCAf2gAwIBAgIUSkbSRoLfBjXbJjN6qlieFiOghaYwDQYJKoZIhvcNAQEL
+        BQAwGjEYMBYGA1UEAwwPdmYtYXBwLWZyb250ZW5kMB4XDTIxMDQyOTA4MTI1NFoX
+        DTIyMDQyOTA4MTI1NFowGjEYMBYGA1UEAwwPdmYtYXBwLWZyb250ZW5kMIIBIjAN
+        BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA0cwO4O8hixItYVO1I1DRkdVJAq7g
+        QvFlNqGdi1E72OdFr0gaqkvit/WIdlp+PDS7ijSx4nHlJzAJE3o0fExtuGHdUTNN
+        /xogpy1kR/FhkGAf1oheXeVSKHu2n1tJBdQMFpdyAArTPm8moH5E9YcDqG/FyvB3
+        EsxRj5PC5MhlahKEJBoj4Zie4NJeWotw6taX3HEMbNJZsDkN66P2XLplqnorgauX
+        T09xTk1ytQNfa+8PO30/OXaHDfP/m05H5hMV7NusQEP9gJ5ieQlWD0a2J8ygOdzp
+        I9yvz8KayA13RltllDh2xOuY8XLEN7eRDUZsx7trkOO585BDeL3pKEclQQIDAQAB
+        o1MwUTAdBgNVHQ4EFgQUaHBsTQS19env9ENQto/PCc5eyAgwHwYDVR0jBBgwFoAU
+        aHBsTQS19env9ENQto/PCc5eyAgwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+        AQsFAAOCAQEAy2FrghXK63g19hNrdkXpTU0/D7hQjHduMelZRXlwRa3XZ5WeM5Ll
+        jQrbYeTP8PZERzETqXNnRRLUu6RHihQKMyl1BzX0/Wj2QdArz+dz9NZnRQ8EafPi
+        RW0bzgXHiXPhLzPYAGQSC27Ff2ZikaugdUJ3HG5LKiHjryX9tny755PcC7VBYYuz
+        egmHxGnxdbUlO02/OYNR7Ey4FHcZ1ToIx44DMfU9dgItgbaWiTrKC9Zj+dJ3z4Aq
+        gbQGXNQB1rXj+V0wN/SpMQhe8MLFkqUEtMXgmZFiJ1NmhBM7/dknKRjRqH/o3oY0
+        C0KCjvpiIxswnqffwBZIk1UThoRui8s6sw==
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN PRIVATE KEY-----
+        MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDRzA7g7yGLEi1h
+        U7UjUNGR1UkCruBC8WU2oZ2LUTvY50WvSBqqS+K39Yh2Wn48NLuKNLHiceUnMAkT
+        ejR8TG24Yd1RM03/GiCnLWRH8WGQYB/WiF5d5VIoe7afW0kF1AwWl3IACtM+byag
+        fkT1hwOob8XK8HcSzFGPk8LkyGVqEoQkGiPhmJ7g0l5ai3Dq1pfccQxs0lmwOQ3r
+        o/ZcumWqeiuBq5dPT3FOTXK1A19r7w87fT85docN8/+bTkfmExXs26xAQ/2AnmJ5
+        CVYPRrYnzKA53Okj3K/PwprIDXdGW2WUOHbE65jxcsQ3t5ENRmzHu2uQ47nzkEN4
+        vekoRyVBAgMBAAECggEAJqRGLUn+TKY5c46+c1XEc+7r9rGNHudldA2KfgmlU0st
+        u541Qx6dELMJwnrie2ZfEJKqHQJLac9gLJU6q5ZMM0TbRcSEXjNKxmAG83VTOgtq
+        cdJGR1cgrdIzjeB7b7Zhz5tvZPCZfgts+uym+O44T0LfFIT7+ZtmfmKB6C+89i9D
+        Rhd11rTv+ZM4Dqawg1W2hOhkNEL/OGLXyXG5lfD8RmS6adG1yH9aseFRgRVAPNLW
+        /LPU2u+6VH/J/62xAvik1kRQ3Pd8wTFqzh95IBNwYBQ5A8U6wOTCkF2ObRLPVQdB
+        CWp+SPPUjdqciTk+OXg7ZKQBQTbzDynS1XLITXoF0QKBgQD6OKKKocZXgsRppfYp
+        LygLyiC5DPyN6DYNyMRS+FSkYxWpuhOrhrAsl7gk+EyWvbcStd0/HOn24Tew3/CY
+        M9Zm2UvlcVCUZoERGPVzctnbfyNB5hZ65WK6OY+O0+G6bPnYMgFLsGfOLgCmiFt7
+        twcmDDwZzwu/0iywWgreysSvFQKBgQDWpG0v4pivXB7YWm8U1XHPmvqkwZldWAht
+        Eys+XXNNXrMxMw0PeNtC59Pb0j7DCaTki6xPdHxVYbtB/00hKlgsX9JjQLPK+6gJ
+        2djmoP6ABtU+2t0s8UTYXBDtfGe0dErAoPrA4gmlMJldCU6Qfzt2ODDqiK8lacuJ
+        IBCX9vEIfQKBgGwhR1SDXnP4xaomFv9rKnIV0hhF3WnxnFJOnVCBkgpL61OiXtez
+        57QNiH0pc+d8an3Ca67Xbt/KKcfcrlsHo7JkWuD3G+xVc5cQ4xkV28F36qOSq8pG
+        EGkLcNc3BwgKCdn8mgS8Yc9+n7dXm7kVuhgeF2bLy3cEe11mO+ZVV7OVAoGAEMFt
+        NJu/x5CtZ75HhZzT8ZzrjAkA6+R/Y+RnL8sjwRpvapvNnTOWCjcGttZGx/rswFqW
+        7Ozu98tVTuWbI8emcnBYgB8A6guTJpG2+OoAdAYUh3+WXHfJJAqr154qik+5tifa
+        60u57QdKMZUUaPtFrQjd6LEa2xTTKrUyFmrUjhECgYBiGIycTPNifo5WYUKZeBZP
+        CE7jbr6/r37n9EyihOif3z5WydSx/HuLjpBfKwbDbwG/DkILE0eTs2o1e+5n1kMY
+        ces+X1Alwxj1ORd8tQr0/O6qhpFL0F5pxc2kq6J/0+Naz1HU9lWOUmgrPIN51++b
+        1duiEoAcnnZoChxJhFHJkw==
+        -----END PRIVATE KEY-----

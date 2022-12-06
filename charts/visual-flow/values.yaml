@@ -1,0 +1,23 @@
+# release name: vf-app
+vf-app:
+  install: true
+  backend:
+    deployment:
+      secretVariables:
+        SLACK_API_TOKEN: ""
+    configFile:
+      superusers:
+        - your-github-nickname
+  frontend:
+    deployment:
+      variables:
+        STRATEGY_CALLBACK_URL: "https://hostname/vf/ui/callback"
+      secretVariables:
+        GITHUB_APP_ID: "DUMMY_ID"
+        GITHUB_APP_SECRET: "DUMMY_SECRET"
+vf-secrets:
+  install: true
+argo:
+  install: true
+kube-metrics:
+  install: true

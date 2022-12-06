@@ -1,0 +1,126 @@
+project: visual-flow
+imagePullSecret: vf-image-pull
+
+backend:
+  createRoles: true
+  serviceAccount: 
+    name: vf-app-backend
+    addSA: true
+  deployment:
+    replicas: 1
+    image:
+      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      tag: 1.1.0-backend
+      pullPolicy: Always
+    # variables:
+    secretVariables:
+      KEYSTORE_PASS: "b4hAz8QYVJxDUpv"
+      SLACK_API_TOKEN: ""
+    sslSecret: vf-app-backend-ssl
+    resources:
+      requests:
+        cpu: 100m
+        memory: 1Gi
+      limits:
+        cpu: 100m
+        memory: 1Gi
+  configFile:
+    oauth:
+      userInfo: "https://api.github.com/user"
+      fieldsMap:
+        id: id
+        username: login
+        name: name
+        email: email
+    superusers: []
+    namespace:
+      label: vf-app
+      prefix: "vf-"
+      annotations: {}
+    argo:
+      serverUrl: "http://vf-app-argo-server.svc:2746"
+      limits:
+        cpu: 0.5
+        memory: 256Mi
+      requests:
+        cpu: 0.5
+        memory: 256Mi
+      ttlStrategy:
+        secondsAfterCompletion: 5
+        secondsAfterSuccess: 5
+        secondsAfterFailure: 360
+    sparkJob:
+      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      tag: 1.1.0-spark-job
+      jobSA: spark
+      jobRB: spark-edit
+      addSA: true
+      # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
+    slackJob:
+      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      tag: 1.0.0-slack-notification
+      appAPItoken: "${SLACK_API_TOKEN}"
+    pvc:
+      memory: 1Gi
+      mountPath: "/files" 
+    redis:
+      host: redis-master.default.svc.cluster.local # host: 10.100.26.99
+      port: 6379
+      # username: ${REDIS_USER}
+      password: 
+      database: 1
+  service:
+    type: NodePort
+    port: 8080
+    # nodePort:
+    annotations: {}
+  subPath: "/vf/be"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+frontend:
+  deployment:
+    replicas: 1
+    image:
+      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      tag: 1.1.0-frontend
+      pullPolicy: Always
+    variables:
+      STRATEGY: GITHUB
+      API_SERVER: "https://vf-app-backend:8080/vf/be/"
+      STRATEGY_CALLBACK_URL: "https://localhost/vf/ui/callback"
+      GITHUB_STRATEGY_BASE_URL: "https://github.com"
+      REDIS_HOST: "redis-master.default.svc.cluster.local" # Redis host
+      REDIS_PORT: "6379" # Redis port. [Default]: 6379
+      REDIS_DB: "1" # Database. [Default]: 0
+    secretVariables:
+      GITHUB_APP_ID: ""
+      GITHUB_APP_SECRET: ""
+      SESSION_SECRET: "a597d68350b02f2d"
+      REDIS_PASSWORD: "" #Redis password
+    sslSecret: vf-app-frontend-ssl
+    resources: {}
+  service:
+    type: LoadBalancer
+    port: 443
+    # nodePort:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+      # service.beta.kubernetes.io/aws-load-balancer-ssl-cert: "arn:aws:acm:us-east-2:185309785115:certificate/7610ed7d-5a81-4ea2-a18a-7ba1606cca3e"
+      # service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
+      # service.beta.kubernetes.io/aws-load-balancer-type: "nlb-ip"
+  subPath: "/vf/ui/"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
