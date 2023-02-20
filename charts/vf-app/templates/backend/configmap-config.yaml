@@ -48,7 +48,8 @@ data:
       annotations: {{- toYaml .configFile.namespace.annotations | nindent 8 }}
     pvc:
       memory: {{ default "1Gi" .configFile.pvc.memory }}
-      mountPath: {{ default "/files"  .configFile.pvc.mountPath }} 
+      mountPath: {{ default "/files"  .configFile.pvc.mountPath }}
+      accessModes: {{ default "ReadWriteMany" .configFile.pvc.accessModes }}
       {{- end }}
     job:
       imagePullSecret: {{ $.Values.imagePullSecret }}
