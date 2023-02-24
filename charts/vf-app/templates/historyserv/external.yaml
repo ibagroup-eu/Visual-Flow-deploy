@@ -1,0 +1,21 @@
+{{- if .Values.historyserv }}
+{{- $partName := "historyserv" }}
+{{- with .Values.historyserv }}
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+spec:
+  host: "{{ .external.host }}.{{ .external.defaultdns }}"
+  path: /
+  port:
+    targetPort: http
+  to:
+    kind: Service
+    name: {{ $.Release.Name }}-{{ $partName }}
+{{- end }}
+{{- end }}

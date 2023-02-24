@@ -73,11 +73,11 @@ backend:
         secondsAfterSuccess: 5
         secondsAfterFailure: 360
     redis:
-	    host: okd4w1.okd.gomel.iba.by
-        port: 31380
-        #  username: ${REDIS_USER}
-        password: yourpasswd
-        database: 1
+      host: okd4w1.okd.gomel.iba.by
+      port: 31380
+      #  username: ${REDIS_USER}
+      password: yourpasswd
+      database: 1
     sparkJob:
       repository: ibagomel/visual-flow-spark-job
       tag: latest
@@ -160,3 +160,25 @@ dbservice:
     type: route
     host: "vf-prod-dbservice"
     defaultdns: apps.okd4.okd.gomel.iba.by  
+
+# Backend History Service
+historyserv:
+  deployment:
+    replicas: 1
+    image:
+      repository: ghcr.io/ibagomel/vf-backend-history-service
+      tag: latest
+      pullPolicy: Always # IfNotPresent
+  service:
+    type: ClusterIP
+    port: 9990
+  external:
+    enabled: true
+    type: route
+    host: "vf-dev-historyserv"
+    defaultdns: apps.okd4.okd.gomel.iba.by
+  configFile:
+    postgresql: 
+      PG_URL: <pg_db_path> # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+      PG_USER: <pg_username> # postgres_username
+      PG_PASS: <pg_password> # postgres_password
