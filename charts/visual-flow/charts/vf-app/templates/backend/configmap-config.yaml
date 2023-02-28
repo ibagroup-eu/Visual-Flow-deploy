@@ -28,7 +28,8 @@ data:
         include-message: always
         include-binding-errors: always
     db-service:
-      host: http://vf-prod-dbservice.com/
+      host: http://vf-app-dbservice.default.svc.cluster.local:9999/ # http://vf-prod-dbservice.com/
+      port: 9999
     oauth:
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
@@ -40,6 +41,9 @@ data:
         - {{ . | quote }}
         {{- end }}
         {{- end }}
+    notifications:
+      slack: {{ toYaml .configFile.notifications.slack | nindent 8 }}
+      mail: {{ toYaml .configFile.notifications.mail | nindent 8 }}
     namespace:
       app: {{ $.Release.Namespace }}
       label: {{ default $.Release.Name .configFile.namespace.label }}
@@ -47,6 +51,10 @@ data:
       {{- if .configFile.namespace.annotations }}
       annotations: {{- toYaml .configFile.namespace.annotations | nindent 8 }}
       {{- end }}
+    pvc:
+      memory: {{ default "1Gi" .configFile.pvc.memory }}
+      mountPath: {{ default "/files"  .configFile.pvc.mountPath }} 
+      accessModes: {{ default "ReadWriteMany" .configFile.pvc.accessModes }}
     job:
       imagePullSecret: {{ $.Values.imagePullSecret }}
       spark:
@@ -58,9 +66,6 @@ data:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}
     argo: {{- toYaml .configFile.argo | nindent 6 }}
-    pvc:
-      memory: {{ default "1Gi" .configFile.pvc.memory }}
-      mountPath: {{ default "/files"  .configFile.pvc.mountPath }}
     {{- if .configFile.redis }}
     redis:
       host: {{ .configFile.redis.host }}

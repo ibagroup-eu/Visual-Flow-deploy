@@ -72,10 +72,10 @@ spec:
               value: "http://localhost:3010"
             - name: BASE_URL
               value: "{{ default "/" .subPath }}"
-            - name: NODE_ENV # Required: development / production
-              value: production
-            - name: SESSION_STORE # dynamic (requires Redis) / in-memory
-              value: in-memory 
+            # - name: NODE_ENV # Required: development / production
+            #   value: production
+            # - name: SESSION_STORE # dynamic (requires Redis) / in-memory
+            #   value: in-memory 
           livenessProbe:
             httpGet:
               path: {{ default "/" .subPath }}
