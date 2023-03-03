@@ -18,13 +18,50 @@ If you have just installed the AWS CLI, then you need to log in using following 
 
 ## Create an EKS cluster
 
-Visual Flow should be installed on an EKS cluster. You can create EKS Fargate cluster using following commands:
+Visual Flow should be installed on an EKS cluster. For the full functionality - recomended use regular AWS EKS claster (if you need Backend & UI). In case if you need just backend and limited functions of frontend UI (without db & history services) - you can use and Fargate claster.
 
+
+You can create cluster using following commands:
+
+#### EKS Fargate:
 ```bash
 export CLUSTER_NAME=visual-flow
-eksctl create cluster --region us-east-1 --name $CLUSTER_NAME --fargate --full-ecr-access --with-oidc --external-dns-access --alb-ingress-access 
+
+eksctl create cluster \
+--fargate \
+--name $CLUSTER_NAME \
+--region us-east-1 \
+--with-oidc \
+--full-ecr-access \
+--external-dns-access \
+--alb-ingress-access
 
 # duration: ~20min
+# if creation failed delete cluster using following command and repeat from beginning
+# eksctl delete cluster --region us-east-1 --name $CLUSTER_NAME
+
+# check access
+kubectl get nodes
+kubectl get pods --all-namespaces
+```
+
+#### EKS Regular cluster (EC2 instance type 'm5.large' with one Node)
+```bash
+export CLUSTER_NAME=visual-flow
+
+eksctl create cluster \
+--name $CLUSTER_NAME \
+--region us-east-1 \
+--with-oidc \
+--ssh-access \
+--full-ecr-access \
+--external-dns-access \
+--alb-ingress-access \
+--instance-types=m5.large \
+--managed \
+--nodes 1
+
+# duration: ~30min
 # if creation failed delete cluster using following command and repeat from beginning
 # eksctl delete cluster --region us-east-1 --name $CLUSTER_NAME
 
@@ -93,6 +130,44 @@ For additional info check following guide:
 <https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html>
 
 <https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html>
+
+
+## Install an EFS Controller to EKS (for automatic PVC provisioning)
+
+How to install Amazon EFS CSI driver:
+
+<https://docs.aws.amazon.com/eks/latest/userguide/efs-csi.html>
+
+GitHub source of EFS CSI controller:
+
+<https://github.com/kubernetes-sigs/aws-efs-csi-driver>
+
+Depend from your choice - you can use or Dynamic provisioning (PV & PVC will be created and mounted to StorageClass automatically):
+
+<https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/dynamic_provisioning/README.md>
+
+...or Static provisioning (you will need to create PV by yourself with required config):
+
+<https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md>
+
+
+## Install Redis & PostgreSQL (optional if need)
+
+Some functionality of VF app requires to have Redis & PosgreSQL dbs. Both of them with custom and default configs included in installation as a separate helm charts (values files with source from bitnami repo). 
+
+<https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon/charts/dbs>
+
+You can get them and install on you cluster using following commands:
+
+1. Redis (for Session and Job's execution history)
+
+`helm install redis -f bitnami-redis/values.yaml bitnami/redis`
+
+2. PostgreSQL (History service)
+
+`helm install pgserver -f bitnami-postgresql/values.yaml bitnami/postgresql`
+
+FYI: Just in case better to save output of these command (it contains helpful info with short guide, how to get access to pod & dbs and show default credentials).
 
 ## Install Visual Flow
 
@@ -235,8 +310,27 @@ For additional info check following guide:
 
     `kubectl get pods --all-namespaces`
 
+#### Delete additional components
+
+If you do no need them anymore - you can also delete and these additional components:
+
+1. Redis & PostgreSQL databases
+
+`helm uninstall redis`
+
+`helm uninstall pgserver`
+
+2. EFS & LoadBalancer Controllers
+
+`helm uninstall aws-efs-csi-driver`
+
+`helm uninstall aws-load-balancer-controller`
+
 ## Delete EKS
 
 1. If the EKS is no longer required, you can delete it using the following guide:
 
-    <https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html>
+`eksctl delete cluster --name visual-flow`
+
+<https://docs.aws.amazon.com/eks/latest/userguide/delete-cluster.html>
+
