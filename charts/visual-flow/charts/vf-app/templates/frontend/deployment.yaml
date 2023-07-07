@@ -1,0 +1,96 @@
+{{- if .Values.frontend }}
+{{- $partName := "frontend" }}
+{{- with .Values.frontend }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+spec:
+  replicas: {{ default 1 .deployment.replicas }}
+  selector:
+    matchLabels:
+      name: {{ $.Release.Name }}-{{ $partName }}
+      app: {{ $.Release.Name }}
+      project: {{ $.Values.project }} 
+  template:
+    metadata:
+      {{- if or .deployment.variables .deployment.secretVariables }}
+      annotations:
+        {{- if .deployment.variables }}
+        checksum/configmap: "{{ include (print $.Template.BasePath "/" $partName "/configmap.yaml") $ | sha256sum }}"
+        {{- end }}
+        {{- if .deployment.secretVariables }}
+        checksum/secret: "{{ include (print $.Template.BasePath "/" $partName "/secret.yaml") $ | sha256sum }}"
+        {{- end }}
+      {{- end }}
+      labels:
+        name: {{ $.Release.Name }}-{{ $partName }}
+        app: {{ $.Release.Name }}
+        project: {{ $.Values.project }}
+    spec:
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecret }}
+      {{- if .deployment.serviceAccountName }}
+      serviceAccountName: {{ .deployment.serviceAccountName }}
+      {{- end }}
+      containers:
+        - name: {{ $partName }}
+          image: {{ .deployment.image.repository }}:{{ .deployment.image.tag }}
+          imagePullPolicy: {{ .deployment.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: 8888
+          {{- if .deployment.cmd }}
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - {{ .deployment.cmd | quote }}
+          {{- end }}
+          {{- if .deployment.resources }}
+          resources: {{ toYaml .deployment.resources | nindent 12 }}
+          {{- end }}
+          {{- if or .deployment.variables .deployment.secretVariables }}
+          envFrom:
+            {{- if .deployment.variables }}
+            - configMapRef:
+                name: {{ $.Release.Name }}-{{ $partName }}
+            {{- end }}
+            {{- if .deployment.secretVariables }}
+            - secretRef:
+                name: {{ $.Release.Name }}-{{ $partName }}
+            {{- end }}
+          {{- end }}
+          env:
+            - name: EXPRESS_PORT
+              value: "8888"
+            - name: MOCK_SERVER
+              value: "http://localhost:3010"
+            - name: BASE_URL
+              value: "{{ default "/" .subPath }}"
+            # - name: NODE_ENV # Required: development / production
+            #   value: production
+            # - name: SESSION_STORE # dynamic (requires Redis) / in-memory
+            #   value: in-memory 
+          livenessProbe:
+            httpGet:
+              path: {{ default "/" .subPath }}
+              port: https
+              scheme: HTTPS
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: fe-ssl
+              mountPath: "/app/certs/"
+      volumes:
+        - name: fe-ssl
+          secret:
+            secretName: {{ .deployment.sslSecret }}
+{{- end }}
+{{- end }}

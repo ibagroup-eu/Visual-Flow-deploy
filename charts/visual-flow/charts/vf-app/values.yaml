@@ -1,0 +1,196 @@
+project: visual-flow
+imagePullSecret: vf-image-pull
+
+backend:
+  createRoles: true
+  serviceAccount: 
+    name: vf-app-backend
+    addSA: true
+  deployment:
+    replicas: 1
+    image:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend
+      tag: 1.3.0
+      pullPolicy: IfNotPresent
+    # variables:
+    secretVariables:
+      KEYSTORE_PASS: "b4hAz8QYVJxDUpv"
+      SLACK_API_TOKEN: ""
+    sslSecret: vf-app-backend-ssl
+    resources:
+      requests:
+        cpu: 100m
+        memory: 1Gi
+      limits:
+        cpu: 100m
+        memory: 1Gi
+  configFile:
+    oauth:
+      userInfo: "https://api.github.com/user"
+      fieldsMap:
+        id: id
+        username: login # username
+        name: name
+        email: email
+    superusers: []
+    dbService:
+      host: http://visual-flow-dbservice.visual-flow.svc.cluster.local:9999/
+      port: 9999
+    notifications:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-notification-service
+      tag: 1.3.0
+      slack:
+        token: ""
+      mail:
+        default-encoding: UTF-8                       # Default-encoding
+        host: smtp.gmail.com                          # An IP address or FQDN of the SMTP server
+        username: EMAIL                               # The user name that will be used to connect to the SMTP server.
+        password: APP_PASSWORD                        # The password of the SMTP user
+        port: 587                                     # Usually 465 or 587.
+        properties:
+          mail:
+            debug: false
+            smtp:
+              debug: false
+              auth: true
+              starttls: true
+        protocol: smtp
+        test-connection: false
+    namespace:
+      label: vf-app
+      prefix: "vf-"
+      annotations: {}
+    argo:
+      serverUrl: "http://visual-flow-argo-server.visual-flow.svc.cluster.local:2746" # "http://vf-app-argo-server.svc:2746"
+      limits:
+        cpu: 0.5
+        memory: 256Mi
+      requests:
+        cpu: 0.5
+        memory: 256Mi
+      ttlStrategy:
+        secondsAfterCompletion: 5
+        secondsAfterSuccess: 5
+        secondsAfterFailure: 360
+    sparkJob:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-spark-job
+      tag: 1.3.0
+      jobSA: spark
+      jobRB: spark-edit
+      addSA: true
+      # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
+    slackJob:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-notification-service
+      tag: 1.3.0
+      appAPItoken: "${SLACK_API_TOKEN}"
+    pvc:
+      memory: 2Gi
+      mountPath: "/files" 
+    redis:
+      host: redis-master.redis.svc.cluster.local # host: 10.100.26.99
+      port: 6379
+      # username: ${REDIS_USER}
+      # password: "Redis_password"
+      database: 1
+  service:
+    type: NodePort
+    port: 8080
+    nodePort: 30920
+    annotations: {}
+  subPath: "/vf/be"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+frontend:
+  deployment:
+    replicas: 1
+    image:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-frontend
+      tag: 1.3.0
+      pullPolicy: IfNotPresent
+    variables:
+      STRATEGY: GITHUB
+      GITHUB_STRATEGY_BASE_URL: "https://github.com"
+      AUTHORIZATION_URL: 'https://github.com/login/oauth/authorize'
+      TOKEN_URL: 'https://github.com/login/oauth/access_token'
+      ISSUER_URL: 'https://github.com'
+      USERINFO_URL: 'https://api.github.com/users/userinfo'
+      OIDC_AVATAR_KEY: avatar_url
+      OIDC_AVATAR_URL: 'https://api.github.com/users/${USERNAME}'
+      NODE_ENV: 'production' # 'development'
+      SESSION_STORE: 'dynamic' # dynamic (requires Redis) / in-memory
+      STRATEGY_CALLBACK_URL: "https://localhost/vf/ui/callback"
+      API_SERVER: "https://visual-flow-backend.visual-flow.svc.cluster.local:8080/vf/be/"
+      REDIS_HOST: "redis-master.redis.svc.cluster.local" # Redis host
+      REDIS_PORT: "6379" # Redis port. [Default]: 6379
+      REDIS_DB: "1" # Database. [Default]: 0
+    secretVariables:
+      GITHUB_APP_ID: "8bfc74c33ef52bc100fb"
+      GITHUB_APP_SECRET: "9b3f8dd962381960cc3ab12d76371f0cb050f4fd"
+      CLIENT_ID: ""
+      CLIENT_SECRET: ""
+      REDIS_PASSWORD: 'SuperStrongPassword'
+      SESSION_SECRET: 'a597d68350b02f2d'
+    sslSecret: vf-app-frontend-ssl
+    resources: {}
+  service:
+    type: LoadBalancer
+    port: 443
+    # nodePort: 30910
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+  subPath: "/vf/ui/"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+# DB Service
+dbservice:
+  deployment:
+    replicas: 1
+    image:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend-db-service
+      tag: 1.3.0
+      pullPolicy: IfNotPresent
+    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
+  service:
+    type: ClusterIP
+    port: 9999
+  external:
+    enabled: false
+    type: route
+    host: "visual-flow-dbservice"
+    defaultdns: ""
+
+# Backend History Service
+historyserv:
+  deployment:
+    replicas: 1
+    image:
+      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend-history-service
+      tag: 1.3.0
+      pullPolicy: IfNotPresent # IfNotPresent # Always
+  service:
+    type: ClusterIP
+    port: 9990
+  external:
+    enabled: false
+    type: route
+    host: "visual-flow-historyserv"
+    defaultdns: ""
+  configFile:
+    postgresql: 
+      # PG_URL: jdbc:postgresql://vf-postgresql.ckzgbpx2qvvk.us-east-1.rds.amazonaws.com:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+      # PG_USER: postgres # postgres_username
+      # PG_PASS: # postgres_password
