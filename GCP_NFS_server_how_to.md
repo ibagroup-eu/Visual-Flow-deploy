@@ -29,7 +29,7 @@
      sudo chmod 777 /share
      ```
 
-5. Add this foulder to nfs exports
+5. Add this folder to nfs exports
 
      Install vim (or any other tool for text edit) on your VM
      ```bash
