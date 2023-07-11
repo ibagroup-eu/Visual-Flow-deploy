@@ -51,7 +51,7 @@ If you have GKE cluster, you can connect to it using the following command:
 
     `git clone -b google https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-GCP-deploy`
 
-2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/VF-deploy/blob/GCP_v1.3.0/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
+2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/google/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
 
     `cd Visual-Flow-GCP-deploy/charts/visual-flow`
 
