@@ -184,7 +184,7 @@ If you have GKE cluster, you can connect to it using the following command:
         historyserv:
           configFile:
             postgresql:
-              PG_URL: jdbc:postgresql://postgresql.<PostgreSQL_NAMESPACE>.svc.cluster.local:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+              PG_URL: jdbc:postgresql://postgresql.<PostgreSQL_NAMESPACE>.svc.cluster.local:5432/postgres
               PG_USER: postgres # postgres_username
               PG_PASS: SuperStrongPassword # postgres_password
         ```
