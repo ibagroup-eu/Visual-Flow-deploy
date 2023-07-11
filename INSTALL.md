@@ -47,9 +47,9 @@ If you have GKE cluster, you can connect to it using the following command:
 
 ## Install Visual Flow
 
-1. Clone (or download) the [GCP_v1.3.0 branch from VF-deploy repository](https://github.com/ibagroup-eu/VF-deploy/tree/GCP_v1.3.0) on your local computer using following command:
+1. Clone (or download) the [google branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/google) on your local computer using following command:
 
-    `git clone -b GCP_v1.3.0 https://github.com/ibagroup-eu/VF-deploy.git Visual-Flow-GCP-deploy`
+    `git clone -b google https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-GCP-deploy`
 
 2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/VF-deploy/blob/GCP_v1.3.0/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
 
@@ -57,7 +57,7 @@ If you have GKE cluster, you can connect to it using the following command:
 
 3. *(Optional)* Configure Slack notifications (replace `YOUR_SLACK_TOKEN`) in [values-gcp.yaml](./charts/visual-flow/values-gcp.yaml) using the following guide:
 
-    <https://github.com/ibagroup-eu/VF-deploy/blob/main/SLACK_NOTIFICATION.md>
+    <https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/main/SLACK_NOTIFICATION.md>
 
 4. Set superusers in [values-gcp.yaml](./charts/visual-flow/values-gcp.yaml).
 
@@ -249,11 +249,11 @@ If you have GKE cluster, you can connect to it using the following command:
 
     `https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/`
 
-3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/VF-deploy/blob/GKE_v1.3.0/Visual_Flow_User_Guide.pdf)
+3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/google/Visual_Flow_User_Guide.pdf)
 
 4. For each project Visual Flow (VF) generates a new namespace. 
 
-   **IMPORTANT**: For each namespace there is a PVC that will be created and assigned automatically (`vf-pvc`) in RWX mode (`read\write-many`). GKE has default storage clases to provision PV in RWX modes (f.e. `standard-rwx`) that uses Cloud Filestore API service, but it has limitation size (1Tb-10Tb) when VF usually use small disks (f.e. 2G per project\namespace). So, each VF project will cost you at least 200$/month. There is an open ticket for this feature: (https://issuetracker.google.com/issues/193108375?pli=1). Instead, you can use NFS and assign it to each new namespace, but it have to be assigned manually for each VF project. You can read here about how to create yourself NFS server on your Google cloud (https://github.com/ibagroup-eu/VF-deploy/tree/GCP_v1.3.0/GCP_NFS_server_how_to.md). If you do not need to know how to create a new NFS server and assign VF to it you can skip this section.
+   **IMPORTANT**: For each namespace there is a PVC that will be created and assigned automatically (`vf-pvc`) in RWX mode (`read\write-many`). GKE has default storage clases to provision PV in RWX modes (f.e. `standard-rwx`) that uses Cloud Filestore API service, but it has limitation size (1Tb-10Tb) when VF usually use small disks (f.e. 2G per project\namespace). So, each VF project will cost you at least 200$/month. There is an open ticket for this feature: (https://issuetracker.google.com/issues/193108375?pli=1). Instead, you can use NFS and assign it to each new namespace, but it have to be assigned manually for each VF project. You can read here about how to create yourself NFS server on your Google cloud (https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/google/GCP_NFS_server_how_to.md). If you do not need to know how to create a new NFS server and assign VF to it you can skip this section.
 
    First, create the project in the app, open it and check the URL of the page. It will have the following format:
 
