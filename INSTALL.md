@@ -253,7 +253,7 @@ If you have GKE cluster, you can connect to it using the following command:
 
 4. For each project Visual Flow (VF) generates a new namespace. 
 
-   **IMPORTANT**: For each namespace there is a PVC that will be created and assigned automatically (`vf-pvc`) in RWX mode (`read\write-many`). GKE has default storage clases to provision PV in RWX modes (f.e. `standard-rwx`) that uses Cloud Filestore API service, but it has limitation size (1Tb-10Tb) when VF usually use small disks (f.e. 2G per project\namespace). So, each VF project will cost you at least 200$/month. There is an open ticket for this feature: (https://issuetracker.google.com/issues/193108375?pli=1). Instead, you can use NFS and assign it to each new namespace, but it have to be assigned manually for each VF project. You can read here about how to create yourself NFS server on your Google cloud (https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/google/GCP_NFS_server_how_to.md). If you do not need to know how to create a new NFS server and assign VF to it you can skip this section.
+   **IMPORTANT**: For each namespace there is a PVC that will be created and assigned automatically (`vf-pvc`) in RWX mode (`read\write-many`). GKE has default storage classes to provision PV in RWX modes (f.e. `standard-rwx`) that uses Cloud Filestore API service, but it has limitation size (1Tb-10Tb) when VF usually use small disks (f.e. 2G per project\namespace). So, each VF project will cost you at least 200$/month. There is an open ticket for this feature: (https://issuetracker.google.com/issues/193108375?pli=1). Instead, you can use NFS and assign it to each new namespace, but it have to be assigned manually for each VF project. You can read here about how to create yourself NFS server on your Google cloud (https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/google/GCP_NFS_server_how_to.md). If you do not need to know how to create a new NFS server and assign VF to it you can skip this section.
 
    First, create the project in the app, open it and check the URL of the page. It will have the following format:
 
@@ -269,7 +269,7 @@ If you have GKE cluster, you can connect to it using the following command:
     # <PV_NAME> - name of Persistent Volume for your project. # vf-pvc-testing
     # <STORAGE_SIZE> - storage size that you want to assign to this VF project. # 2G
     # <NFS_HOST> - NFS server ip. # 10.128.0.15
-    # <NFS_PATH> - PATH to shared foulder in your NFS you want to use in this VF project. # /share
+    # <NFS_PATH> - PATH to shared folder in your NFS you want to use in this VF project. # /share
     # <NAMESPACE> - VF project namespace for jobs. # vf-testing
     apiVersion: v1
     kind: PersistentVolume
