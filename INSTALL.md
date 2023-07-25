@@ -134,7 +134,7 @@ If you have GKE cluster, you can connect to it using the following command:
     3. Install Redis with predefined values.yaml (./charts/dbs/bitnami-redis/values.yaml):
 
         ```bash
-        helm install -n <REDIS_NAMESPACE> redis bitnami/redis -f dbs/bitnami-redis/values.yaml
+        helm install -n <REDIS_NAMESPACE> redis bitnami/redis -f ../dbs/bitnami-redis/values.yaml
         ```
 
     4. Update `redis.host` and `redis.password` in [values-gcp.yaml](./charts/visual-flow/values-gcp.yaml) file according to the example below:
@@ -174,7 +174,7 @@ If you have GKE cluster, you can connect to it using the following command:
     3. Install PostgreSQL with predefined values.yaml (./charts/dbs/bitnami-postgresql/values.yaml):
 
         ```bash
-        helm install -n <PostgreSQL_NAMESPACE> postgresql bitnami/postgresql -f dbs/bitnami-postgresql/values.yaml
+        helm install -n <PostgreSQL_NAMESPACE> postgresql bitnami/postgresql -f ../dbs/bitnami-postgresql/values.yaml
         ```
 
     4. Update `PG_URL`, `PG_USER` and `PG_PASS` in [values-gcp.yaml](./charts/visual-flow/values-gcp.yaml) file according to the example below:
