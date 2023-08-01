@@ -20,7 +20,7 @@ If you have just installed the Google CLI, then you need to log in using followi
 
 ## Create GKE cluster
 
-**IMPORTANT**: if you are new to GKE, please read about Google cloud cluster cluster types,config params and pricing (<https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters>)
+**IMPORTANT**: if you are new to GKE, please read about Google cloud cluster: cluster types, config params and pricing (<https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters>)
 
 Visual Flow should be installed on GKE cluster. We recommend to use Standard cluster, because Autopilot cluster has some extra limitations and worse application performance. You can create GKE cluster using following commands:
 
