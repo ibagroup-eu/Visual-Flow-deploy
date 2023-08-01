@@ -142,7 +142,7 @@ If you have GKE cluster, you can connect to it using the following command:
         ```yaml
         ...
         redis:
-          host: redis-master.<REDIS_NAMESPACE>.svc.cluster.local # host: 10.100.26.99
+          host: redis-master.<REDIS_NAMESPACE>.svc.cluster.local
           port: 6379
         # username: ${REDIS_USER}
           password: SuperStrongPassword
@@ -151,7 +151,7 @@ If you have GKE cluster, you can connect to it using the following command:
           frontend:
             deployment:
               variables:
-                STRATEGY_CALLBACK_URL: 'https://35.188.116.67/vf/ui/callback'
+                STRATEGY_CALLBACK_URL: 'https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/callback'
                 SESSION_STORE: 'dynamic' # dynamic (requires Redis) / in-memory
                 REDIS_HOST: redis-master.<REDIS_NAMESPACE>.svc.cluster.local
                 REDIS_PORT: 6379
