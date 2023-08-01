@@ -83,7 +83,7 @@ If you have GKE cluster, you can connect to it using the following command:
 
         If the kube-metrics is already installed then go to step 6.
 
-    2. Edit [values.yaml](./charts/visual-flow/values.yaml) file according to the example below:
+    2. Edit [values-gcp.yaml](./charts/visual-flow/values-gcp.yaml) file according to the example below:
 
         ```yaml
         ...
