@@ -4,13 +4,7 @@ vf-app:
   backend:
     configFile:
       superusers:
-        - DYarashenka-ibagroup-eu
-        - IShautsou-ibagroup-eu
-        - AGSadovsky
-        - alemeshevskaya-ibagroup-eu
-        - hbahdanovich-ibagroup-eu
-        - AlexB-iba
-        - ydudnitski-ibagroup-eu
+        - your-github-nickname
       notifications:
         slack:
           token: "YOUR_SLACK_TOKEN"
