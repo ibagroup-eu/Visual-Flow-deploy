@@ -1,0 +1,85 @@
+{{- if .Values.backend }}
+{{- $partName := "backend" }}
+{{- with .Values.backend }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+spec:
+  replicas: {{ default 1 .deployment.replicas }}
+  selector:
+    matchLabels:
+      name: {{ $.Release.Name }}-{{ $partName }}
+      app: {{ $.Release.Name }}
+      project: {{ $.Values.project }}
+  template:
+    metadata:
+      annotations:
+        checksum/configmap-config: "{{ include (print $.Template.BasePath "/" $partName "/configmap-config.yaml") $ | sha256sum }}"
+        {{- if .deployment.variables }}
+        checksum/configmap-env: "{{ include (print $.Template.BasePath "/" $partName "/configmap-env.yaml") $ | sha256sum }}"
+        {{- end }}
+        {{- if .deployment.secretVariables }}
+        checksum/secret: "{{ include (print $.Template.BasePath "/" $partName "/secret.yaml") $ | sha256sum }}"
+        {{- end }}
+      labels:
+        name: {{ $.Release.Name }}-{{ $partName }}
+        app: {{ $.Release.Name }}
+        project: {{ $.Values.project }}
+    spec:
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecret }}
+      serviceAccountName: {{ .serviceAccount.name }}
+      containers:
+        - name: {{ $partName }}
+          image: {{ .deployment.image.repository }}:{{ .deployment.image.tag }}
+          imagePullPolicy: {{ .deployment.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: 8080
+          {{- if .deployment.cmd }}
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - {{ .deployment.cmd | quote }}
+          {{- end }}
+          {{- if .deployment.resources }}
+          resources: {{ toYaml .deployment.resources | nindent 12 }}
+          {{- end }}
+          {{- if or .deployment.variables .deployment.secretVariables }}
+          envFrom:
+            {{- if .deployment.variables }}
+            - configMapRef:
+                name: {{ $.Release.Name }}-{{ $partName }}-env
+            {{- end }}
+            {{- if .deployment.secretVariables }}
+            - secretRef:
+                name: {{ $.Release.Name }}-{{ $partName }}
+            {{- end }}
+          {{- end }}
+          readinessProbe:
+            tcpSocket:
+              port: https
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 5
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: be-config
+              mountPath: "/config/"
+            - name: be-ssl
+              mountPath: "/ssl/"
+      volumes:
+        - name: be-config
+          configMap:
+            name: {{ $.Release.Name }}-{{ $partName }}-config
+        - name: be-ssl
+          secret:
+            secretName: {{ .deployment.sslSecret }}
+{{- end }}
+{{- end }}

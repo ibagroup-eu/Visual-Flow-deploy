@@ -1,0 +1,19 @@
+{{- if .Values.backend }}
+{{- $partName := "backend" }}
+{{- with .Values.backend }}
+{{- if .deployment.variables }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}-env
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}-env
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+data:
+  {{- range $key, $val := .deployment.variables }}
+  {{ $key }}: {{ $val | quote }}
+  {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

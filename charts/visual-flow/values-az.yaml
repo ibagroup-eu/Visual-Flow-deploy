@@ -1,0 +1,79 @@
+ # release name: vf-app
+vf-app:
+  install: true
+  backend:
+    deployment:
+      image:
+        repository: visualflow.azurecr.io/visual-flow/vf-backend
+        tag: 1.4.0
+    configFile:
+      superusers:
+        - your-github-nickname
+      host: https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/
+      dbService:
+        host: http://visual-flow-dbservice.visual-flow.svc.cluster.local:9999/
+        port: 9999
+      notifications:
+        repository: visualflow.azurecr.io/visual-flow/vf-notification-service
+        tag: 1.4.0
+      argo:
+        serverUrl: http://visual-flow-argo-server.visual-flow.svc.cluster.local:2746
+      sparkJob:
+        repository: visualflow.azurecr.io/visual-flow/vf-spark-job
+        tag: 1.4.0
+        config:
+          mountPath: "/cfg"
+      slackJob:
+        repository: visualflow.azurecr.io/visual-flow/vf-notification-service
+        tag: 1.4.0
+      pvc:
+        memory: 2Gi
+        mountPath: "/files" 
+      redis:
+        host: redis-master.redis.svc.cluster.local # host: 10.100.26.99
+        port: 6379
+      # username: ${REDIS_USER}
+        password: # <REDIS_PASSWORD>
+        database: 1
+
+  frontend:
+    deployment:
+      image:
+        repository: visualflow.azurecr.io/visual-flow/vf-frontend
+        tag: 1.4.0
+      variables:
+        STRATEGY_CALLBACK_URL: 'https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/callback'
+        SESSION_STORE: 'dynamic' # dynamic (requires Redis) / in-memory
+        REDIS_HOST: redis-master.redis.svc.cluster.local
+        REDIS_PORT: 6379
+        API_SERVER: "https://visual-flow-backend.visual-flow.svc.cluster.local:8080/vf/be/"
+        CALLBACK_URL: 'https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/callback'
+        LOGOUT_URL: 'https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/callback'
+      secretVariables:
+        GITHUB_APP_ID: "DUMMY_ID"
+        GITHUB_APP_SECRET: "DUMMY_SECRET"
+        REDIS_PASSWORD: # <REDIS_PASSWORD>
+
+  dbservice:
+    deployment:
+      image:
+        repository: visualflow.azurecr.io/visual-flow/vf-backend-db-service
+        tag: 1.4.0
+
+  historyserv:
+    deployment:
+      image:
+        repository: visualflow.azurecr.io/visual-flow/vf-backend-history-service
+        tag: 1.4.0
+    configFile:
+      postgresql:
+        PG_URL: jdbc:postgresql://postgresql.postgres.svc.cluster.local:5432/postgres # postgres_url
+        PG_USER: # postgres_username
+        PG_PASS: # postgres_password
+
+vf-secrets:
+  install: true
+argo:
+  install: true
+kube-metrics:
+  install: false

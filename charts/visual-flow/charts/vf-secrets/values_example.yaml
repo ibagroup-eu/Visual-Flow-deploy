@@ -1,0 +1,36 @@
+# see description of parameters in ./README.md file.
+project: visual-flow
+
+secrets:
+  - name: vf-backend-ssl
+    app: vf-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN CERTIFICATE-----
+        ...
+        -----END CERTIFICATE-----
+  - name: vf-frontend-ssl
+    app: vf-app
+    type: kubernetes.io/tls
+    data:
+      tls.crt: |-
+        <BASE64 ENCODED LINE>
+      tls.key: |-
+        <BASE64 ENCODED LINE>
+  - name: vf-image-pull
+    app: vf-app
+    type: kubernetes.io/dockerconfigjson
+    stringData:
+      .dockerconfigjson: |-
+        {
+          "auths": {
+            "<registry>": {
+              "auth": "<BASE64 ENCODED USER:PASS>"
+            }
+          }
+        }
