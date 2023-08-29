@@ -28,8 +28,8 @@ data:
         include-message: always
         include-binding-errors: always
     db-service:
-      host: http://vf-app-dbservice.default.svc.cluster.local:9999/ # http://vf-prod-dbservice.com/
-      port: 9999
+      host: "{{ default "http://vf-app-dbservice.default.svc.cluster.local:9999/" .configFile.dbService.host }}"
+      port: "{{ default "9999" .configFile.dbService.port }}"
     oauth:
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
@@ -62,6 +62,8 @@ data:
         serviceAccount: {{ .configFile.sparkJob.jobSA }}
         roleBinding: {{ .configFile.sparkJob.jobRB }}
         master: {{ default "k8s://https://kubernetes.default.svc" .configFile.sparkJob.kubernetesAPI }}
+      config:
+        mountPath: {{ default "/cfg" .configFile.sparkJob.config.mountPath }}
       slack:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}

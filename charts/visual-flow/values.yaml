@@ -8,6 +8,7 @@ vf-app:
     configFile:
       superusers:
         - your-github-nickname
+      host: https://hostname/vf/ui/
   frontend:
     deployment:
       variables:
