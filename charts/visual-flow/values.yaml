@@ -8,11 +8,11 @@ vf-app:
     configFile:
       superusers:
         - your-github-nickname
-      host: https://hostname/vf/ui/
+      host: https://<HOSTNAME_FROM_SERVICE>/vf/ui/
   frontend:
     deployment:
       variables:
-        STRATEGY_CALLBACK_URL: "https://hostname/vf/ui/callback"
+        STRATEGY_CALLBACK_URL: "https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback"
       secretVariables:
         GITHUB_APP_ID: "DUMMY_ID"
         GITHUB_APP_SECRET: "DUMMY_SECRET"

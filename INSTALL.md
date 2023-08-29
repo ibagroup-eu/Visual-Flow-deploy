@@ -266,7 +266,7 @@ FYI: Just in case better to save output of these command (it contains helpful in
     5. Replace "DUMMY_ID" with the Client ID value in [values.yaml](./charts/visual-flow/values.yaml).
     6. Click **Generate a new client secret** and replace in [values.yaml](./charts/visual-flow/values.yaml) "DUMMY_SECRET" with the generated Client secret value (Please note that you will not be able to see the full secret value later).
 
-11. Update STRATEGY_CALLBACK_URL value in [values.yaml](./charts/visual-flow/values.yaml) to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`
+11. Update 'host' and STRATEGY_CALLBACK_URL value in [values.yaml](./charts/visual-flow/values.yaml) to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`
 
 12. Upgrade the app in EKS cluster using updated values.yaml:
 
