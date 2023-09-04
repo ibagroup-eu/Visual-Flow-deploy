@@ -12,13 +12,14 @@ metadata:
 data:
   application.yaml: |
     server:
+      host: {{ default "https://vf-prod.apps.okd4.okd.gomel.iba.by" .configFile.server.host }}
       ssl:
         key-store: /tmp/keystore/tls.p12
         key-store-password: ${KEYSTORE_PASS}
         key-store-type: pkcs12
         key-alias: vf-api
         key-password: ${KEYSTORE_PASS}
-      port: 8080
+      port: {{ default "8080" .configFile.server.port }}
       tomcat:
         accesslog:
           enabled: true
@@ -41,6 +42,10 @@ data:
         - {{ . | quote }}
         {{- end }}
         {{- end }}
+    notifications:
+      image: {{ default "ghcr.io/ibagomel/vf-notification-service:latest" .configFile.notifications.image }}
+      slack: {{ toYaml .configFile.notifications.slack | nindent 8 }}
+      mail: {{ toYaml .configFile.notifications.mail | nindent 8 }}
     namespace:
       app: {{ $.Release.Namespace }}
       label: {{ default $.Release.Name .configFile.namespace.label }}
