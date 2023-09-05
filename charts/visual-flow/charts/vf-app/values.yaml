@@ -10,7 +10,7 @@ backend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-backend
+      tag: 1.4.1-backend
       pullPolicy: IfNotPresent
     # variables:
     secretVariables:
@@ -36,7 +36,7 @@ backend:
     host: https://vf-app-frontend.default.svc.cluster.local:443/vf/ui/
     notifications:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-notification-service
+      tag: 1.4.1-notification-service
       slack:
         botToken: BOT_TOKEN
         channelName: CHANNEL_NAME
@@ -55,6 +55,10 @@ backend:
               starttls: true
         protocol: smtp
         test-connection: false
+    # slackJob:
+    #   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+    #   tag: 1.4.1-slack-notification
+    #   appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
       label: vf-app
       prefix: "vf-"
@@ -73,16 +77,12 @@ backend:
         secondsAfterFailure: 360
     sparkJob:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-spark-job
+      tag: 1.4.1-spark-job
       pullPolicy: Always # IfNotPresent
       jobSA: spark
       jobRB: spark-edit
       addSA: true
       # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
-    slackJob:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-slack-notification
-      appAPItoken: "${SLACK_API_TOKEN}"
     pvc:
       memory: 1Gi
       mountPath: "/files" 
@@ -110,7 +110,7 @@ frontend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-frontend
+      tag: 1.4.1-frontend
       pullPolicy: IfNotPresent
     variables:
       STRATEGY: GITHUB
@@ -164,7 +164,7 @@ dbservice:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-backend-db-service
+      tag: 1.4.1-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
   service:
@@ -182,7 +182,7 @@ historyserv:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.0-backend-history-service
+      tag: 1.4.1-backend-history-service
       pullPolicy: IfNotPresent # IfNotPresent # Always
   service:
     type: ClusterIP
