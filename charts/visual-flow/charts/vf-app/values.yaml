@@ -25,7 +25,6 @@ backend:
         cpu: 100m
         memory: 1Gi
   configFile:
-  
     oauth:
       userInfo: "https://api.github.com/user"
       fieldsMap:
@@ -34,15 +33,16 @@ backend:
         name: name
         email: email
     superusers: []
-    host: https://vf-app-frontend.default.svc.cluster.local:443/vf/ui/
+    host: []
+    port: []
     dbService:
-      host: 
-      port: 
+      host: []
+      port: 8080
     notifications:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
       tag: 1.4.1-notification-service
       slack:
-        botToken: BOT_TOKEN
+        token: BOT_TOKEN
         channelName: CHANNEL_NAME
       mail:
         default-encoding: UTF-8                       # Default-encoding
@@ -146,9 +146,9 @@ frontend:
     sslSecret: vf-app-frontend-ssl
     resources: {}
   service:
-    type: LoadBalancer # NodePort
+    type: NodePort # NodePort \ LoadBalancer
     port: 443
-    # nodePort: 30910
+    nodePort: 30910 # only in case NodePort
     annotations:
       service.beta.kubernetes.io/aws-load-balancer-type: external
       service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip

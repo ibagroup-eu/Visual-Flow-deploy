@@ -12,13 +12,14 @@ metadata:
 data:
   application.yaml: |
     server:
+      host: {{ default "https://localhost:443/vf/ui/" .configFile.host }}
+      port: {{ default "8080" .configFile.port }}
       ssl:
         key-store: /tmp/keystore/tls.p12
         key-store-password: ${KEYSTORE_PASS}
         key-store-type: pkcs12
         key-alias: vf-api
         key-password: ${KEYSTORE_PASS}
-      port: 8080
       tomcat:
         accesslog:
           enabled: true
@@ -42,6 +43,7 @@ data:
         {{- end }}
         {{- end }}
     notifications:
+      image: "{{ .configFile.notifications.repository }}:{{ .configFile.notifications.tag }}"
       slack: {{ toYaml .configFile.notifications.slack | nindent 8 }}
       mail: {{ toYaml .configFile.notifications.mail | nindent 8 }}
     namespace:
