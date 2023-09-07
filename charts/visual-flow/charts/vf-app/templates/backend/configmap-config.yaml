@@ -63,7 +63,7 @@ data:
         roleBinding: {{ .configFile.sparkJob.jobRB }}
         master: {{ default "k8s://https://kubernetes.default.svc" .configFile.sparkJob.kubernetesAPI }}
       config:
-        mountPath: {{ default "/cfg" .configFile.sparkJob.config.mountPath }}
+        mountPath: {{ default "/cfg" .configFile.sparkJob.mountPath }}
       slack:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}

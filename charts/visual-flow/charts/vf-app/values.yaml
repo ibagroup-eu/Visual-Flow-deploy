@@ -25,6 +25,7 @@ backend:
         cpu: 100m
         memory: 1Gi
   configFile:
+  
     oauth:
       userInfo: "https://api.github.com/user"
       fieldsMap:
@@ -34,6 +35,9 @@ backend:
         email: email
     superusers: []
     host: https://vf-app-frontend.default.svc.cluster.local:443/vf/ui/
+    dbService:
+      host: 
+      port: 
     notifications:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
       tag: 1.4.1-notification-service
@@ -55,10 +59,10 @@ backend:
               starttls: true
         protocol: smtp
         test-connection: false
-    # slackJob:
-    #   repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-    #   tag: 1.4.1-slack-notification
-    #   appAPItoken: "${SLACK_API_TOKEN}"
+    slackJob:
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      tag: 1.4.1-slack-notification
+      appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
       label: vf-app
       prefix: "vf-"
@@ -82,6 +86,7 @@ backend:
       jobSA: spark
       jobRB: spark-edit
       addSA: true
+      mountPath: 
       # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
     pvc:
       memory: 1Gi
