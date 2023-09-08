@@ -173,11 +173,11 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
 1. Clone (or download) the [Amazon branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon) on your local computer using following command:
 
-    `git clone -b amazon https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-AWS-deploy`
+    `git clone -b amazon https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-deploy`
 
 2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/amazon/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
 
-    `cd Visual-Flow-AWS-deploy/charts/visual-flow`
+    `cd Visual-Flow-deploy/charts/visual-flow`
 
 3. *(Optional)* Configure Slack notifications in [values.yaml](./charts/visual-flow/values.yaml) using following guide:
 
@@ -266,7 +266,7 @@ FYI: Just in case better to save output of these command (it contains helpful in
     5. Replace "DUMMY_ID" with the Client ID value in [values.yaml](./charts/visual-flow/values.yaml).
     6. Click **Generate a new client secret** and replace in [values.yaml](./charts/visual-flow/values.yaml) "DUMMY_SECRET" with the generated Client secret value (Please note that you will not be able to see the full secret value later).
 
-11. Update 'host' and STRATEGY_CALLBACK_URL value in [values.yaml](./charts/visual-flow/values.yaml) to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`
+11. Update 'host' (`host: https://<HOSTNAME_FROM_SERVICE>/vf/ui/`) and 'STRATEGY_CALLBACK_URL' (`STRATEGY_CALLBACK_URL: https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`) values in [values.yaml](./charts/visual-flow/values.yaml). 
 
 12. Upgrade the app in EKS cluster using updated values.yaml:
 
