@@ -159,6 +159,11 @@ Some functionality of VF app requires to have Redis & PosgreSQL dbs. Both of the
 
 You can get them and install on you cluster using following commands:
 
+Add 'bitnami' repository to helm repo list
+```bash
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+```
 1. Redis (for Session and Job's execution history)
 
 `helm install redis -f bitnami-redis/values.yaml bitnami/redis`
