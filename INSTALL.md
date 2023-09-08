@@ -171,17 +171,17 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
 ## Install Visual Flow
 
-1. Clone (or download) the [Amazon branch from VF-deploy repository](https://github.com/ibagroup-eu/VF-deploy/tree/amazon) on your local computer using following command:
+1. Clone (or download) the [Amazon branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon) on your local computer using following command:
 
-    `git clone -b amazon https://github.com/ibagroup-eu/VF-deploy.git Visual-Flow-AWS-deploy`
+    `git clone -b amazon https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-AWS-deploy`
 
-2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/VF-deploy/blob/amazon/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
+2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/amazon/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
 
     `cd Visual-Flow-AWS-deploy/charts/visual-flow`
 
 3. *(Optional)* Configure Slack notifications in [values.yaml](./charts/visual-flow/values.yaml) using following guide:
 
-    <https://github.com/ibagroup-eu/VF-deploy/blob/main/SLACK_NOTIFICATION.md>
+    <https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/main/SLACK_NOTIFICATION.md>
 
 4. Set superusers in [values.yaml](./charts/visual-flow/values.yaml).
 
