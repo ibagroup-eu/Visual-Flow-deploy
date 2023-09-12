@@ -248,7 +248,7 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
 7. Install the app using the updated [values.yaml](./charts/visual-flow/values.yaml) file with the following command:
 
-    `helm install vf-app . -f values.yaml`
+    `helm upgrade -i vf-app . -f values.yaml`
 
 8. Check that the app is successfully installed and all pods are running with the following command:
 
