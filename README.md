@@ -35,7 +35,7 @@ Visual Flow application is divided into the following repositories:
 
 # Visual Flow deploy
 
-This repository contains helm chart to deploy Visual Flow app with all requirements to Amazon EKS cluster.
+This repository contains helm chart to deploy Visual Flow app with all requirements to Minikube cluster.
 
 Helm charts in this repository:
 
