@@ -82,7 +82,7 @@ backend:
     sparkJob:
       repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-spark-job
-      pullPolicy: Always # IfNotPresent
+      pullPolicy: IfNotPresent
       jobSA: spark
       jobRB: spark-edit
       addSA: true
@@ -188,7 +188,7 @@ historyserv:
     image:
       repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-backend-history-service
-      pullPolicy: IfNotPresent # IfNotPresent # Always
+      pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9990
