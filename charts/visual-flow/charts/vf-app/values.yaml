@@ -146,9 +146,9 @@ frontend:
     sslSecret: vf-app-frontend-ssl
     resources: {}
   service:
-    type: LoadBalancer # NodePort \ LoadBalancer \ ClusterIP
+    type: NodePort # NodePort \ LoadBalancer \ ClusterIP
     port: 443
-    # nodePort: 30910 # only in case NodePort
+    nodePort: 30910 # only in case NodePort
     annotations:
       service.beta.kubernetes.io/aws-load-balancer-type: external
       service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
