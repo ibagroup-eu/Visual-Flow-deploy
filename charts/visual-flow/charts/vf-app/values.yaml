@@ -9,7 +9,7 @@ backend:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-backend
       pullPolicy: IfNotPresent
     # variables:
@@ -39,7 +39,7 @@ backend:
       host: []
       port: 8080
     notifications:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-notification-service
       slack:
         token: BOT_TOKEN
@@ -60,7 +60,7 @@ backend:
         protocol: smtp
         test-connection: false
     slackJob:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-slack-notification
       appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
@@ -80,7 +80,7 @@ backend:
         secondsAfterSuccess: 5
         secondsAfterFailure: 360
     sparkJob:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-spark-job
       pullPolicy: Always # IfNotPresent
       jobSA: spark
@@ -114,7 +114,7 @@ frontend:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-frontend
       pullPolicy: IfNotPresent
     variables:
@@ -168,7 +168,7 @@ dbservice:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -179,14 +179,14 @@ dbservice:
     enabled: false
     type: route
     host: "vf-dev-dbservice"
-    defaultdns: apps.okd4.okd.gomel.iba.by
+    defaultdns: apps.ibagroup-eu.com
 
 # Backend History Service
 historyserv:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: ghcr.io/ibagroup-eu/visual-flow
       tag: 1.4.1-backend-history-service
       pullPolicy: IfNotPresent # IfNotPresent # Always
   service:
@@ -199,6 +199,6 @@ historyserv:
     defaultdns: apps.aws.com
   configFile:
     postgresql: 
-      PG_URL: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+      PG_URL: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres # jdbc:postgresql://apps.ibagroup-eu.iba.by:31433/example
       PG_USER: postgres # postgres_username
       PG_PASS: SuperStrongPassword # postgres_password
