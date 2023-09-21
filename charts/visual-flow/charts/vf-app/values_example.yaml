@@ -1,125 +1,175 @@
-# see description of parameters in ./README.md file.
 project: visual-flow
 imagePullSecret: vf-image-pull
 
-# backend part of app
 backend:
   createRoles: true
   serviceAccount: 
-    name: vf-app-backend-user
+    name: vf-app-backend
     addSA: true
   deployment:
     replicas: 1
     image:
-      repository: ibagomel/vf-backend
-      tag: latest
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend
       pullPolicy: IfNotPresent
-    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
     # variables:
     secretVariables:
-      KEYSTORE_PASS: "<PASS>" 
-      SLACK_API_TOKEN: "<TOKEN>"
-    sslSecret: vf-backend-ssl
-    # resources: {}
+      KEYSTORE_PASS: "b4hAz8QYVJxDUpv"
+      SLACK_API_TOKEN: ""
+    sslSecret: vf-app-backend-ssl
+    resources:
+      requests:
+        cpu: 100m
+        memory: 1Gi
+      limits:
+        cpu: 100m
+        memory: 1Gi
   configFile:
     oauth:
-      userInfo: "https://api.github.com/user" # "https://<GITLAB_URL>/api/v4/user"
+      userInfo: "https://api.github.com/user"
       fieldsMap:
         id: id
         username: login # username
         name: name
         email: email
-    superusers:
-      - <username>
+    superusers: []
+    host: []
+    port: []
+    dbService:
+      host: []
+      port: 8080
+    notifications:
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-notification-service
+      slack:
+        token: BOT_TOKEN
+        channelName: CHANNEL_NAME
+      mail:
+        default-encoding: UTF-8                       # Default-encoding
+        host: smtp.gmail.com                          # An IP address or FQDN of the SMTP server
+        username: EMAIL                               # The user name that will be used to connect to the SMTP server.
+        password: APP_PASSWORD                        # The password of the SMTP user
+        port: 587                                     # Usually 465 or 587.
+        properties:
+          mail:
+            debug: false
+            smtp:
+              debug: false
+              auth: true
+              starttls: true
+        protocol: smtp
+        test-connection: false
+    slackJob:
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-slack-notification
+      appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
       label: vf-app
-      prefix: "${namespace.label}-"
-      # annotations:
-      #   "[openshift.io/sa.scc.mcs]": "s0:c25,c20"
-      #   "[openshift.io/sa.scc.supplemental-groups]": "1000/10000"
-      #   "[openshift.io/sa.scc.uid-range]": "1000/10000"
+      prefix: "vf-"
+      annotations: {}
     argo:
-      serverUrl: "http://argo-server.<namespace>.svc:2746"
+      serverUrl: "http://vf-app-argo-server.default.svc.cluster.local:2746"
       limits:
         cpu: 0.5
-        memory: 512Mi
+        memory: 256Mi
       requests:
-        cpu: 0.1
-        memory: 64Mi
+        cpu: 0.5
+        memory: 256Mi
+      ttlStrategy:
+        secondsAfterCompletion: 5
+        secondsAfterSuccess: 5
+        secondsAfterFailure: 360
     sparkJob:
-      repository: ibagomel/vf-spark-job
-      tag: latest
-      jobSA: vf-spark-job
-      jobRB: vf-spark-job-edit
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-spark-job
+      pullPolicy: IfNotPresent
+      jobSA: spark
+      jobRB: spark-edit
       addSA: true
-      # kubernetesAPI: "k8s://https://kubernetes.default.svc"
-    slackJob:
-      repository: ibagomel/vf-slack-job
-      tag: latest 
-      appAPItoken: "${SLACK_API_TOKEN}"
+      mountPath: 
+      # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
+    pvc:
+      memory: 1Gi
+      mountPath: "/files" 
+    redis:
+      host: redis-master.default.svc.cluster.local # host: 10.100.26.99
+      port: 6379
+      # username: ${REDIS_USER}
+      password: SuperStrongPassword
+      database: 1
   service:
-    type: ClusterIP
+    type: NodePort
     port: 8080
-    # nodePort:
-    annotations:
-      # service.beta.openshift.io/serving-cert-secret-name: vf-backend-ssl
+    nodePort: 30920
+    annotations: {}
   subPath: "/vf/be"
   external:
-    enabled: true
-    type: ingress # route
-    host: <be_hostname>
-    annotations:
-      # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    ssl:
-      # termination: reencrypt
-      # additionalFields:
-      #   insecureEdgeTerminationPolicy: Redirect
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
 
-frontend: # frontend part of app
+frontend:
   deployment:
     replicas: 1
     image:
-      repository: ibagomel/vf-frontend
-      tag: latest
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-frontend
       pullPolicy: IfNotPresent
-    # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
     variables:
-      API_SERVER: "https://<be_hostname>/be/"
-      STRATEGY_CALLBACK_URL: "https://<fe_hostname>/ui/callback"
-      STRATEGY_BASE_URL: "https://github.com"
+      STRATEGY: GITHUB
+      GITHUB_STRATEGY_BASE_URL: "https://github.com"
+      AUTHORIZATION_URL: 'https://github.com/login/oauth/authorize'
+      TOKEN_URL: 'https://github.com/login/oauth/access_token'
+      ISSUER_URL: 'https://github.com'
+      USERINFO_URL: 'https://api.github.com/users/userinfo'
+      OIDC_AVATAR_KEY: avatar_url
+      OIDC_AVATAR_URL: 'https://api.github.com/users/${USERNAME}'
+      NODE_ENV: 'production' # 'development'
+      SESSION_STORE: 'dynamic' # dynamic (requires Redis) / in-memory
+      STRATEGY_CALLBACK_URL: "https://localhost/vf/ui/callback"
+      # CALLBACK_URL: 'https://localhost/vf/ui/callback'
+      # LOGOUT_URL: >-
+      #   https://localhost/vf/ui/logout?redirect_uri=https://localhost/vf/ui/callback
+      API_SERVER: "https://vf-app-backend:8080/vf/be/"
+      REDIS_HOST: "redis-master.default.svc.cluster.local" # Redis host
+      REDIS_PORT: "6379" # Redis port. [Default]: 6379
+      REDIS_DB: "1" # Database. [Default]: 0
     secretVariables:
-      GITLAB_APP_ID: |-
-        <APP_ID>
-      GITLAB_APP_SECRET: |-
-        <APP_ID>
-      SESSION_SECRET: "<SOME_RANDOM_STRING>"
-    sslSecret: vf-frontend-ssl
-    # resources: {}
+      GITHUB_APP_ID: ""
+      GITHUB_APP_SECRET: ""
+      CLIENT_ID: 'vf-oidc'
+      CLIENT_SECRET: 'F85KC8aFWyAyK0k4aL3eSwKU5IzfyBoK'
+      REDIS_PASSWORD: 'SuperStrongPassword'
+      SESSION_SECRET: 'a597d68350b02f2d'
+    sslSecret: vf-app-frontend-ssl
+    resources: {}
   service:
-    type: ClusterIP
-    port: 8888
-    # nodePort:
+    type: NodePort # NodePort \ LoadBalancer \ ClusterIP
+    port: 443
+    nodePort: 30910 # only in case NodePort
     annotations:
-      # service.beta.openshift.io/serving-cert-secret-name: vf-frontend-ssl
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
   subPath: "/vf/ui/"
   external:
-    enabled: true
-    type: ingress # route
-    host: <fe_hostname>
-    annotations:
-      # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
-    ssl:
-      # termination: Reencrypt
-      # additionalFields:
-      #   insecureEdgeTerminationPolicy: Redirect
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
 
 # DB Service
 dbservice:
   deployment:
     replicas: 1
     image:
-      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: vf-backend-db-service-v1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
   service:
@@ -129,26 +179,26 @@ dbservice:
     enabled: false
     type: route
     host: "vf-dev-dbservice"
-    defaultdns: apps.okd4.okd.gomel.iba.by
+    defaultdns: apps.ibagroup-eu.com
 
 # Backend History Service
 historyserv:
   deployment:
     replicas: 1
     image:
-      repository: 761064621370.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: vf-backend-history-service-v1.3.0
-      pullPolicy: IfNotPresent # IfNotPresent # Always
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend-history-service
+      pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9990
   external:
     enabled: false
     type: route
-    host: "vf-dev-historyserv"
-    defaultdns: apps.okd4.okd.gomel.iba.by
+    host: "vf-historyserv"
+    defaultdns: apps.aws.com
   configFile:
     postgresql: 
-      PG_URL: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+      PG_URL: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres # jdbc:postgresql://apps.ibagroup-eu.iba.by:31433/example
       PG_USER: postgres # postgres_username
       PG_PASS: SuperStrongPassword # postgres_password
