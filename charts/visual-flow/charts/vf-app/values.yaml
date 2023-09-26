@@ -92,6 +92,7 @@ backend:
       memory: 1Gi
       mountPath: "/files" 
     redis:
+      recordLogs: true
       host: redis-master.default.svc.cluster.local # host: 10.100.26.99
       port: 6379
       # username: ${REDIS_USER}

@@ -72,6 +72,7 @@ data:
     argo: {{- toYaml .configFile.argo | nindent 6 }}
     {{- if .configFile.redis }}
     redis:
+      recordLogs: {{ .configFile.redis.recordLogs }}
       host: {{ .configFile.redis.host }}
       port: {{ .configFile.redis.port }}
       {{- if .configFile.redis }}
@@ -79,9 +80,9 @@ data:
       {{- end }}
       password: {{ .configFile.redis.password }}
       database: {{ .configFile.redis.database }}
-      jobHistoryDatabase: 3
-      pipelineHistoryDatabase: 3
-      logDatabase: 3
+      jobHistoryDatabase: 1
+      pipelineHistoryDatabase: 2
+      logDatabase: 4
     {{- end }}  
 {{- end }}
 {{- end }}
