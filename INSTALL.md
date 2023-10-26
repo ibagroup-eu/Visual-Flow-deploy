@@ -42,7 +42,7 @@ When cluster is ready - you can switch default profile to this cluster, check ru
 ```bash
 minikube profile visual-flow
 
-minikube kubectl get pods -A
+kubectl get pods -A
 ```
 
 
