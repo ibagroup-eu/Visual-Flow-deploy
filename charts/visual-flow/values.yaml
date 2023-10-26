@@ -6,7 +6,7 @@ vf-app:
       secretVariables:
         SLACK_API_TOKEN: ""
     configFile:
-      host: https://<HOSTNAME_FROM_SERVICE>/vf/ui/
+      host: https://<HOSTNAME_FROM_SERVICE>:30910/vf/ui/
   frontend:
     deployment:
 vf-secrets:
