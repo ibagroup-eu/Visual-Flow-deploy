@@ -184,8 +184,8 @@ FYI: Just in case better to save output of these command (it contains helpful in
     1. Go to GitHub user's OAuth apps (`https://github.com/settings/developers`) or organization's OAuth apps (`https://github.com/organizations/<ORG_NAME>/settings/applications`).
     2. Click the **Register a new application** or the **New OAuth App** button.
     3. Fill the required fields:
-        - Set **Homepage URL** to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/`
-        - Set **Authorization callback URL** to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`
+        - Set **Homepage URL** to `https://<HOSTNAME_FROM_SERVICE>:30910/vf/ui/`
+        - Set **Authorization callback URL** to `https://<HOSTNAME_FROM_SERVICE>:30910/vf/ui/callback`
     4. Click the **Register application** button.
     5. Replace "DUMMY_ID" with the Client ID value in [values.yaml](./charts/visual-flow/values.yaml).
     6. Click **Generate a new client secret** and replace in [values.yaml](./charts/visual-flow/values.yaml) "DUMMY_SECRET" with the generated Client secret value (Please note that you will not be able to see the full secret value later).
