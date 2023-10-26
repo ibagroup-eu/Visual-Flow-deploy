@@ -7,9 +7,18 @@ To install Visual Flow you should have the following software installed:
 - Git ([install](https://git-scm.com/downloads))
 - kubectl ([install](https://kubernetes.io/docs/tasks/tools/))
 - Helm CLI ([install](https://helm.sh/docs/intro/install/))
-- Minikube ([install](https://minikube.sigs.k8s.io/docs/start/))
 - Docker ([install](https://docs.docker.com/engine/install/))
+- Minikube ([install](https://minikube.sigs.k8s.io/docs/start/))
 
+Make sure everything is installed and configured properly by running next commands. You should see isntalled version for every software you need:
+
+```bash
+git version
+kubectl version --client
+helm version
+docker version
+minikube version
+```
 
 ## Create Minikube cluster
 
