@@ -24,10 +24,12 @@ minikube version
 
 *In this example we will use the Docker driver. But depending on your system or requirements - you can also use hyperv, VirtualBox, Podman, KVM2 etc.*
 
+*We recommend to use at least 4 cpu and 8G RAM for your Minikube cluster to be able to work properly with Spark jobs. If you lower these settings it may cause some fails. If you want to use more than 2 parallel executors and complex jobs, please consider to increase these values.*
+
 You can create simple cluster in Minikube using following commands:
 
 ```bash
-minikube start --cpus 2 --memory 6g --driver docker -p visual-flow 
+minikube start --cpus 4 --memory 8g --driver docker -p visual-flow 
 
 # duration: ~5-10min
 
