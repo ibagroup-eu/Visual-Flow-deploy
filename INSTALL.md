@@ -293,7 +293,7 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
     `https://<HOSTNAME_FROM_SERVICE>/vf/ui/`
 
-3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/VF-deploy/blob/amazon/Visual_Flow_User_Guide.pdf)
+3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/Visual-Flow/blob/main/Visual_Flow_User_Guide.pdf)
 
 4. For each project Visual Flow generates a new namespace. For each namespace, you should create a Fargate profile to allow running jobs and pipelines in the corresponding project.
 
