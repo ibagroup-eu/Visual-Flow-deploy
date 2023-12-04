@@ -212,7 +212,7 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
     `https://<HOSTNAME_FROM_SERVICE>:30910/vf/ui/`
 
-3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/VF-deploy/blob/minikube/Visual_Flow_User_Guide.pdf)
+3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/Visual-Flow/blob/main/Visual_Flow_User_Guide.pdf)
 
 ## Delete Visual Flow
 
