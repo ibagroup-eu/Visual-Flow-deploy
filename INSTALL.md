@@ -256,7 +256,7 @@ If you have AKS cluster, you can connect to it using the following command:
 
     `https://<EXTERNAL_IP_FROM_SERVICE>/vf/ui/`
 
-3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](Visual_Flow_User_Guide.pdf)
+3. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/Visual-Flow/blob/main/Visual_Flow_User_Guide.pdf)
 
 4. For each project Visual Flow (VF) generates a new namespace. 
 
