@@ -9,17 +9,7 @@ To install Visual Flow you should have the following software installed:
 - Helm CLI ([install](https://helm.sh/docs/intro/install/))
 - Minikube ([install](https://minikube.sigs.k8s.io/docs/start/))
 
-In case if you going pull\push images from AWS ECR - you need also install few AWS tools:
-- AWS CLI ([install](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html))
-- eksctl ([install](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html))
-
-And if you have just installed the AWS CLI, then you need to log in using following command:
-
-```bash
-aws configure
-```
-
-In addition, the application has no formal hardware requirements, but Spark itself requires 4 CPUs and 6 GB of RAM to run at least one worker-pod.
+By default VF projects require 4 CPU and 6GB of RAM. We do not recommend to reduce these settings (to avoid job run issues), but you may increase these values based on your workload.
 
 
 ## Create Minikube cluster
@@ -55,7 +45,7 @@ For additional info about Minikube check following guide:
 <https://minikube.sigs.k8s.io/docs/start>
 
 
-## Install Redis & PostgreSQL (optional if need)
+## Install Redis & PostgreSQL
 
 Some functionality of VF app requires to have Redis & PosgreSQL dbs. Both of them with custom and default configs included in installation as a separate helm charts (values files with source from bitnami repo). 
 
