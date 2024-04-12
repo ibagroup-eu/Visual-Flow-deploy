@@ -5,7 +5,7 @@
 To install Visual Flow you should have the following software already installed:
 
 - AWS CLI ([install](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html))
-- kubectl [install](https://kubernetes.io/docs/tasks/tools/))
+- kubectl ([install](https://kubernetes.io/docs/tasks/tools/))
 - eksctl ([install](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html))
 - Helm CLI ([install](https://helm.sh/docs/intro/install/))
 - Git ([install](https://git-scm.com/downloads))
