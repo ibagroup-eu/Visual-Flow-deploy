@@ -151,7 +151,7 @@ Depend from your choice - you can use or Dynamic provisioning (PV & PVC will be 
 <https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md>
 
 
-## Install Redis & PostgreSQL (optional if need)
+## Install Redis & PostgreSQL
 
 Some functionality of VF app requires to have Redis & PosgreSQL dbs. Both of them with custom and default configs included in installation as a separate helm charts (values files with source from bitnami repo). 
 
