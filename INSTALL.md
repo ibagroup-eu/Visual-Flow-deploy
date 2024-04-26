@@ -46,6 +46,8 @@ kubectl get pods --all-namespaces
 ```
 
 #### EKS Regular cluster (EC2 instance type 'm5.large' with one Node)
+
+**IMPORTANT**: You should have at least 1 large node (8GB memory and 2 vCPU) to be able to run VF application on your cluster.
 ```bash
 export CLUSTER_NAME=visual-flow
 
