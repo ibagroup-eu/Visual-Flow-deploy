@@ -33,7 +33,7 @@ export CLUSTER_NAME=visual-flow
 export LOCATION=centralus
 export NUM_NODES=2
 export NUM_ZONES=1
-az aks create --resource-group $MyResourceGroup --name $CLUSTER_NAME --node-count $NUM_NODES --location $LOCATION --zones $NUM_ZONES --generate-ssh-keys
+az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --node-count $NUM_NODES --location $LOCATION --zones $NUM_ZONES --generate-ssh-keys
 
 # check access
 az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
