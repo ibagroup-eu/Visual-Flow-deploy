@@ -1,0 +1,207 @@
+# see description of parameters in ./README.md file.
+project: vfdbricks-aws-app
+imagePullSecret: vf-image-pull
+
+# databricks (backend) part of app
+databricks:
+  createRoles: false
+  serviceAccount: 
+    name: vfdbricks-aws-app-databricks-user
+    addSA: true
+  deployment:
+    replicas: 1
+    image:
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      tag: 0.2-vf-databricks
+      pullPolicy: Always
+    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
+    # variables:
+    secretVariables:
+      KEYSTORE_PASS: "b4hAz8QYVJxDUpv" 
+    sslSecret: vfdbricks-aws-app-databricks-ssl
+    # resources: {}
+  configFile:
+    server:
+      port: 8080
+    oauth:
+      userInfo: "https://api.github.com/user"
+      fieldsMap:
+        id: id
+        username: login
+        name: name
+        email: email
+    superusers:
+      - ${LIST_OF_GITHUB_USERS}
+    namespace:
+      label: vfdbricks-aws-app
+      prefix: "${namespace.label}-"
+    redis:
+      host: redis-master.default.svc.cluster.local
+      port: 6379
+      username:
+      password: SuperStrongPassword
+      timeout: 60000
+      database: 1
+    datasource:         # PostgreSQL DB Connection:
+      url: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres    # ${URL}
+      username: postgres        # ${USERNAME}
+      password: SuperStrongPassword        # ${PASSWORD}
+      driverClassName: org.postgresql.Driver
+    quartz:
+      jobStoreType: jdbc
+      jdbc:
+        initializeSchema: never
+      schedulerName: "vf"
+      properties:
+        org:
+          quartz:
+            scheduler:
+              instanceId: AUTO
+            jobStore:
+              driverDelegateClass: org.quartz.impl.jdbcjobstore.PostgreSQLDelegate #We only make database-specific proxies for databases
+              #            useProperties: true #Indicates that JDBC JobStore stores all values in JobDataMaps as strings, so more complex objects can be stored as name-value pairs rather than serialized in BLOB columns.In the long run, this is safer because you avoid serializing non-String classes to BLOB class versions.
+              tablePrefix: QRTZ_  #Database Table Prefix
+              clusterCheckinInterval: 5000 #Set the frequency (in milliseconds) of this instance'checkin'* with other instances of the cluster.Affects the speed of detecting failed instances.
+              isClustered: true #Turn on Clustering
+            threadPool: #Connection Pool
+              class: org.quartz.simpl.SimpleThreadPool
+              threadCount: 4
+              threadsInheritContextClassLoaderOfInitializingThread: true
+    databricks: 
+      transformations:
+        path: dbfs:/FileStore/spark_transformations_0_1_jar_with_dependencies.jar
+      isv:
+        name: ibagroup_visual-flow
+        version: 0.2
+      retry:
+        codes: 429, 500, 503
+        intervals: 2
+        upTo: 30
+    historyService:
+      host: "http://vfdbricks-aws-app-historyserv.default.svc.cluster.local:8080"
+    jobStorage:
+      host: "https://vfdbricks-aws-app-jobstorage.default.svc.cluster.local:8080"
+  service:
+    type: ClusterIP
+    port: 8888
+    # nodePort:
+  subPath: "/vf/be"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+frontend: # frontend part of app
+  deployment:
+    replicas: 1
+    serviceAccountName: vfdbricks-aws-app-databricks-user
+    image:
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      tag: 0.2-vf-frontend
+      pullPolicy: Always
+    # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
+    variables:
+      API_SERVER: 'https://vfdbricks-aws-app-databricks.default.svc.cluster.local:8888/vf/be/'
+      AUTHORIZATION_URL: 'https://github.com/login/oauth/authorize'
+      TOKEN_URL: 'https://github.com/login/oauth/access_token'
+      ISSUER_URL: 'https://github.com'
+      USERINFO_URL: 'https://api.github.com/users/userinfo'
+      OIDC_AVATAR_URL: 'https://api.github.com/users/${USERNAME}'
+      NODE_ENV: production
+      PLATFORM: DATABRICKS
+      STRATEGY: GITHUB
+      CALLBACK_URL: 'https://localhost/vf/ui/callback'
+      OIDC_AVATAR_KEY: avatar_url
+    secretVariables:
+      GITHUB_APP_ID: ""
+      GITHUB_APP_SECRET: ""
+      SESSION_SECRET: "a597d68350b02f2d"
+    sslSecret: vfdbricks-aws-app-frontend-ssl
+  service:
+    type: LoadBalancer
+    port: 443
+    # nodePort:
+    annotations:
+      service.beta.kubernetes.io/aws-load-balancer-type: external
+      service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
+      service.beta.kubernetes.io/aws-load-balancer-scheme: internet-facing
+      service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+      service.beta.kubernetes.io/aws-load-balancer-backend-protocol: https
+  subPath: "/vf/ui/"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+# Job Storage Service
+jobstorage:
+  deployment:
+    replicas: 1
+    image:
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      tag: 0.2-vf-backend-job-storage-service
+      pullPolicy: Always # IfNotPresent
+    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
+    # variables:
+    sslSecret: vfdbricks-aws-app-jobstorage-ssl
+    serviceAccount: 
+      name: vfdbricks-aws-app-databricks-user
+    keystoreSecret:
+      name: vfdbricks-aws-app-databricks
+      key: KEYSTORE_PASS
+  configFile:
+    server:
+      host: http://vfdbricks-aws-app-jobstorage.default.svc.cluster.local
+      port: 8080
+    redis:
+      host: redis-master.default.svc.cluster.local
+      port: 6379
+      username:
+      password: SuperStrongPassword
+      timeout: 60000
+      database: 1
+  service:
+    type: ClusterIP
+    port: 8080
+    # nodePort:
+  subPath: "/vf/be/"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
+
+# Backend History Service
+historyserv:
+  deployment:
+    replicas: 1
+    image:
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      tag: 0.2-vf-databricks-history-service
+      pullPolicy: Always # IfNotPresent
+  configFile:
+    redis:
+      host: redis-master.default.svc.cluster.local
+      port: 6379
+      username:
+      password: SuperStrongPassword
+      timeout: 60000
+      database: 1
+    server:
+      port: 8080
+  service:
+    type: ClusterIP
+    port: 8080
+    # nodePort:
+  subPath: "/vf/be/history"
+  external:
+    enabled: false
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}

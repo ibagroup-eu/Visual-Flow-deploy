@@ -1,0 +1,111 @@
+{{- if .Values.databricks }}
+{{- $partName := "databricks" }}
+{{- with .Values.databricks }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}-config
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}-config
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+data:
+  application.yaml: |
+    server:
+      ssl:
+        key-store: /tmp/keystore/tls.p12
+        key-store-password: ${KEYSTORE_PASS}
+        key-store-type: pkcs12
+        key-alias: vf-api
+        key-password: ${KEYSTORE_PASS}
+      {{- if .configFile.server }}
+      port: {{ default "8080" .configFile.server.port }}
+      {{- end }}
+      tomcat:
+        accesslog:
+          enabled: true
+      servlet:
+        context-path: "{{ default "/" .subPath }}"
+      error:
+        include-message: always
+        include-binding-errors: always
+    oauth:
+      url:
+        userInfo: "{{ .configFile.oauth.userInfo }}"
+    auth: {{ toYaml .configFile.oauth.fieldsMap | nindent 6 }}
+    superusers:
+      set:
+        {{- if .configFile.superusers }}
+        {{- range .configFile.superusers }}
+        - {{ . | quote }}
+        {{- end }}
+        {{- end }}
+    namespace:
+      app: {{ $.Release.Namespace }}
+      label: {{ default $.Release.Name .configFile.namespace.label }}
+      prefix: {{ default "${namespace.label}-" .configFile.namespace.prefix }}
+      {{- if .configFile.namespace.annotations }}
+      annotations: {{- toYaml .configFile.namespace.annotations | nindent 8 }}
+      {{- end }}
+    spring:
+      {{- if .configFile.redis }}
+      data:
+        redis:
+          host: {{ .configFile.redis.host }}
+          port: {{ default "6379" .configFile.redis.port }}
+          {{- if .configFile.redis }}
+          username: {{ .configFile.redis.username }}
+          {{- end }}
+          password: {{ .configFile.redis.password }}
+          timeout: {{ default "60000" .configFile.redis.timeout }}
+          database: {{ default "0" .configFile.redis.database }}
+      {{- end }}
+      {{- if .configFile.datasource }}
+      datasource: # PostgreSQL DB Connection:
+        url: {{ .configFile.datasource.url }}
+        username: {{ .configFile.datasource.username }}
+        password: {{ .configFile.datasource.password }}
+        driver-class-name: {{ default "org.postgresql.Driver" .configFile.datasource.driverClassName }}
+      {{- end }}
+      {{- if .configFile.quartz }}
+      quartz:
+        job-store-type: {{ default "jdbc" .configFile.quartz.jobStoreType }}
+        jdbc:
+          initialize-schema: {{ default "never" .configFile.quartz.jdbc.initializeSchema }}
+        scheduler-name: {{ default "vf" .configFile.quartz.schedulerName }}
+        properties:
+          org:
+            quartz:
+              scheduler:
+                instanceId: {{ default "AUTO" .configFile.quartz.properties.org.quartz.scheduler.instanceId }}
+              jobStore:
+                driverDelegateClass: {{ default "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate" .configFile.quartz.properties.org.quartz.jobStore.driverDelegateClass }}
+                #   useProperties: true #Indicates that JDBC JobStore stores all values in JobDataMaps as strings, so more complex objects can be stored as name-value pairs rather than serialized in BLOB columns.In the long run, this is safer because you avoid serializing non-String classes to BLOB class versions.
+                tablePrefix: {{ default "QRTZ_" .configFile.quartz.properties.org.quartz.jobStore.tablePrefix }}  #Database Table Prefix
+                clusterCheckinInterval: {{ default "5000" .configFile.quartz.properties.org.quartz.jobStore.clusterCheckinInterval }} #Set the frequency (in milliseconds) of this instance'checkin'* with other instances of the cluster.Affects the speed of detecting failed instances.
+                isClustered: {{ default "true" .configFile.quartz.properties.org.quartz.jobStore.isClustered }}  #Turn on Clustering
+              threadPool: #Connection Pool
+                class: {{ default "org.quartz.simpl.SimpleThreadPool" .configFile.quartz.properties.org.quartz.threadPool.class }}
+                threadCount: {{ default "4" .configFile.quartz.properties.org.quartz.threadPool.threadCount }}
+                threadsInheritContextClassLoaderOfInitializingThread: {{ default "true" .configFile.quartz.properties.org.quartz.threadPool.threadsInheritContextClassLoaderOfInitializingThread }} 
+    {{- end }}
+    {{- if .configFile.databricks }}
+    databricks:
+      transformations:
+        path: {{ .configFile.databricks.transformations.path }}
+      isv:
+        name: {{ .configFile.databricks.isv.name }}
+        version: {{ .configFile.databricks.isv.version }}
+      retry:
+        codes: {{ .configFile.databricks.retry.codes }}
+        intervals: {{default "2" .configFile.databricks.retry.intervals }}
+        upTo: {{default "30" .configFile.databricks.retry.upTo }}
+    {{- end }}   
+    historyService:
+      host: {{ .configFile.historyService.host }}           # History Service URL
+    jobStorage:
+      host: {{ .configFile.jobStorage.host }}               # Job Storage Service URL
+    jarFilePath: {{ default "/app/spark-transformations-0.1-jar-with-dependencies.jar" .configFile.jarFilePath }}
+    jarHash: {{ default "/app/spark-transformations-0.1-jar-with-dependencies.jar.md5" .configFile.jarHash }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,172 @@
+# see description of parameters in ./README.md file.
+project: vfdbricks-aws-secret
+
+secrets:
+  - name: vf-image-pull
+    app: vfdbricks-aws-app
+    type: kubernetes.io/dockerconfigjson
+    stringData:
+      .dockerconfigjson: |-
+        {"auths": {}}
+  - name: vfdbricks-aws-app-databricks-ssl
+    app: vfdbricks-aws-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDWTCCAkGgAwIBAgIUe6r4qBHbkRn3rhcRFb4G0EF22/EwDQYJKoZIhvcNAQEL
+        BQAwFTETMBEGA1UEAxMKa3ViZXJuZXRlczAeFw0yNDA3MzAwODE5MDBaFw0yNTA3
+        MzAwODE5MDBaMEExPzA9BgNVBAMTNnZmZGJyaWNrcy1hd3MtYXBwLWRhdGFicmlj
+        a3MuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQAD
+        ggEPADCCAQoCggEBAMPyVlm4zW+sl7WIjije7YghCRbswUaTD5DaFsEspuPvDdLC
+        bS29UXsis9GKGqe96Iwz28OKkfk9KdN7AxTMh6L/RxOoOPbQINZZX8t2v1I6QJE/
+        AyA9wkymg29frjRCptKKnhn5hmUOlbRKrM+qsIpKbTY5ErMMcsROywHNu9CCuMJ0
+        Q2VU5p6c18mENBDR6QnlFnO1MdLVu1osbl5O5qElj3bXmGnGJg4fQRJkgMiQlAfB
+        WJ/o7nM9M141i5cjzRgvkGbPJiX8qOd/4ewRxWfwzW4XkLqaJK7oLBeS/85UMxd6
+        FAcmyyYZeXE1hooqAePqfpsDFluTBtLn/qanR/sCAwEAAaN1MHMwDgYDVR0PAQH/
+        BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYDVR0O
+        BBYEFGUXrzWSCpVpRmyJkiOL7PdkU41DMB8GA1UdIwQYMBaAFJohCKDmaAyAW7y4
+        rM02sYOnte9PMA0GCSqGSIb3DQEBCwUAA4IBAQCTOvPvF+I9/PuyT/B6gip3YV/9
+        iwhOVYyWkFgbOqRvBlDgzIMijTwyl/khQVG+ODQ7vOrcZxlHdkZR81vlLNj8pPAF
+        CDbz/0oqCcnAfeLHgs14Ztos52mpZ5EnPve3hYv72LmsQd1HNapXcunoBp3RuyFm
+        jg81fqqqASCcpyb6zrPbHQyaNuTEbHVhhIaaXWf0tATMkHuWWH3vIE1o1tWbbJ3D
+        pt9SB4bu0Sr+D+Dpl3b4CguEHx06xIfq/Ve1i9pS+pnGhtjdLxktG8fKHU0iiJhd
+        YfhbqshtaK5PwV5oJontnxHgh8p6+njKAimCPkxuGurlf7q/KwP/jKQOc+mE
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN PRIVATE KEY-----
+        MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQDD8lZZuM1vrJe1
+        iI4o3u2IIQkW7MFGkw+Q2hbBLKbj7w3Swm0tvVF7IrPRihqnveiMM9vDipH5PSnT
+        ewMUzIei/0cTqDj20CDWWV/Ldr9SOkCRPwMgPcJMpoNvX640QqbSip4Z+YZlDpW0
+        SqzPqrCKSm02ORKzDHLETssBzbvQgrjCdENlVOaenNfJhDQQ0ekJ5RZztTHS1bta
+        LG5eTuahJY9215hpxiYOH0ESZIDIkJQHwVif6O5zPTNeNYuXI80YL5BmzyYl/Kjn
+        f+HsEcVn8M1uF5C6miSu6CwXkv/OVDMXehQHJssmGXlxNYaKKgHj6n6bAxZbkwbS
+        5/6mp0f7AgMBAAECggEADrxs42EojLDNf/4oYskmfUmuu1ChgG3oNRvnANlw0PeA
+        x0w5QGqvyV46E79vyGmvJswc8j8Q7KOS6lqinVp8YN+94qvmDM8TiSCTjw5RI8f0
+        ZHf5WOAMJWOTGDnOihObztL/QjN9I0sjgGQ/9tDUEge4NY8OlEnoClIP+69ojoJZ
+        3chVQIf6E7XRYoLbvWdjXP3sXtMy9wR8jsYRyYlnmvTuf57MOBxcoM0tPl3rUnG0
+        3sPK1F+UYtHSZf+NJ944dx7BeNn1Uq/hOkBM12VcZt307OXxYxl+IrOHialZV43w
+        eGqDG4F9EgB2wQP82RlDWZx6FgauU8eRcH5yG2L3gQKBgQDcn3qf0l4fTR7OTp2p
+        pcOMHmXG2S1CQB6sUT8ijsEHwGOHQKQqiYYrKkOpCDut/pZ9P3vgTNaenbfecXLl
+        9XblHhdqvofXame5NnyeZb9lynKoL6krCFoS5LQ/sMDMwcAM2vPH5KeXtXPfLmRo
+        qlQFJhThXWK4bpOmBBM6seIYmwKBgQDjXeaKSS2zWscl0qI1OKY7uifgGW2Piktj
+        xZQru031XfFKxX2k2gV9nf1sJ+nIfFu0WM5ffPMJ3bd6Zqa2SGdkSeqL94kXKC4Q
+        GInWkXYVtWbRQ0TCprVSowWmHZKkBqAhDvklfVza9YBofnD2sGQBXu4Kz2cBcmM2
+        +ZE1/iIUIQKBgGkzGnOvCfZ+/Zt+XSuRwUbFD97bm/slO/sK2sINs/mQQWUy65Tk
+        8rcOdijZpit3ZCbg6J6xxPzpU82b5x/EBieGS8A4jemn8UGdu5qEBdnxyO5tm4rL
+        drffmhtsmuKH2J3IocnFPCzY9yGKq5JE9b9mwzobH4G2KG1XMBwiyh7VAoGANNED
+        VOxa6WcVC/w6IhLeytEbojtF8Co4CR1EpkQEgBMqkiv+W+UpkVy6Gf3LmP8KboKS
+        rivgaVJP5OcjowR+wBVLnugJuI9k4+hPXMC9pZ1WHRZ7SpxfUqr8DPKhtei0GfnY
+        dpUAlPyir6Nvql6fXJIoyeoUC4n+8i5XRSubzwECgYAb1St7Gqwf86dRKYb3XzPu
+        W4dV/wteQ9rIESbWOkqzRMFGFfSFpmUeO4HHcsEiAQLd2YL5q0DTyB3cNDiozZXp
+        vx5wFr1L6t632Bu429XET7kkvjhXf7lltTHNyJyzp0qZz4m+xhXZtmH9wENNomu0
+        ciMMIERBTOHj8vquQSVVtQ==
+        -----END PRIVATE KEY-----
+  - name: vfdbricks-aws-app-frontend-ssl
+    app: vfdbricks-aws-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDVzCCAj+gAwIBAgIUOqjLtGhuQ6sIofkBNnF6J2pr/54wDQYJKoZIhvcNAQEL
+        BQAwFTETMBEGA1UEAxMKa3ViZXJuZXRlczAeFw0yNDA3MzAwODMwMDBaFw0yNTA3
+        MzAwODMwMDBaMD8xPTA7BgNVBAMTNHZmZGJyaWNrcy1hd3MtYXBwLWZyb250ZW5k
+        LmRlZmF1bHQuc3ZjLmNsdXN0ZXIubG9jYWwwggEiMA0GCSqGSIb3DQEBAQUAA4IB
+        DwAwggEKAoIBAQCvfr5958RdFxY9+XfmDX6Oz99AnHyxZv+JAUd3BhEYu+AILOUQ
+        IFfGPx3m3z1wIZm29v97zZcCgcUk94Urh5s9H2NJHG4oSQBYSVr+qdcquDdU97UJ
+        sPJB+X7XvJNg7wt6PaOFHM2r5SvDcABuTJVP3DxKJtwTX7SbiDGteflqKXPhOFY8
+        lT+zMQFtDtF4jnxXlYTOuNeFFM/HTCfYTdVNyf2mNTrC2arU2pNXbyQpQ6joIxtd
+        iDXJDeEKXPMR0Rq4WUEfOPBwwtE4wtighZ6Tl2YRBCcENiApk+zDw2M/5ieDnJ3e
+        M/JvO2CFB/84HZV2mRpdkumPNlk0INJ3YiunAgMBAAGjdTBzMA4GA1UdDwEB/wQE
+        AwIFoDATBgNVHSUEDDAKBggrBgEFBQcDATAMBgNVHRMBAf8EAjAAMB0GA1UdDgQW
+        BBQ199njlQT1+5lOJaqcvAkFv2L5dzAfBgNVHSMEGDAWgBSaIQig5mgMgFu8uKzN
+        NrGDp7XvTzANBgkqhkiG9w0BAQsFAAOCAQEArSDz12Z9kApDTulB9pcsIDuvZUDG
+        NwJPbKZ8FsC/TbAxRexQJM/nkBzHTnvk75ZbrfDaQz35VF0P03s1sXJ51LUlfit5
+        tkLGdQ+4t8a5W3C+B3nnUYwtjgK/MqI7YiWa+etDgoS3hopoBcOuHbi6WUhoMZc2
+        5b7/nqSMcpiia7iLW6jAy1uQI+ClSFoIH9EDRR2iEh9Nm2hOhxzhAb7vS1nQ7Y6o
+        Dj6P2iC9JMwf2+yiwaTLMY+VkZOJWuv8cuv1kMm89oKAjk15UWMSR1yLAZaVEGDy
+        4Lu0LP6YjJIVGq7X87NJmTmfARqGGOHSooG2R9Bpr35JWcqOdHik5JsO3g==
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN PRIVATE KEY-----
+        MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCvfr5958RdFxY9
+        +XfmDX6Oz99AnHyxZv+JAUd3BhEYu+AILOUQIFfGPx3m3z1wIZm29v97zZcCgcUk
+        94Urh5s9H2NJHG4oSQBYSVr+qdcquDdU97UJsPJB+X7XvJNg7wt6PaOFHM2r5SvD
+        cABuTJVP3DxKJtwTX7SbiDGteflqKXPhOFY8lT+zMQFtDtF4jnxXlYTOuNeFFM/H
+        TCfYTdVNyf2mNTrC2arU2pNXbyQpQ6joIxtdiDXJDeEKXPMR0Rq4WUEfOPBwwtE4
+        wtighZ6Tl2YRBCcENiApk+zDw2M/5ieDnJ3eM/JvO2CFB/84HZV2mRpdkumPNlk0
+        INJ3YiunAgMBAAECggEAVPvrEnyAVlYeQr/ChKjHPzBB2/+L0Lrghv+UFHrfH5un
+        Zz4aZP9MkiexesJjdaAH2Jbu7IyIEsI17mtg1U4Tant/MIHwhFiprpdDVex4Umsn
+        /GECDeHexv0jpCRhOEE6TSV5QLZMkO/nC/r6cm9qpOQxW/VKgKVJiEHhULEvC22e
+        Ms71oLusWBqwogFry0N4c9UFJBUPKnuIx/ehQNKI1wE+UOUdDSiikClEBweEOp6w
+        KuCnZ7OHl4SnD0M4rAZqQf8ZAcNcHoEjVRW9gxbh+d4lGcRIceXHE1m6lFxKOvRa
+        vLsIpBehaUGRTQGS+SA43ZPNRuieFK4mSbxMDzp5hQKBgQDp84Ml7hj5VhrG8eMX
+        3Qd38zR/yGNyng2CtmK4TX0p0P3iY1remhb/p4zn2apcKov/7ybRcz5GcaxBKbhJ
+        65LjOouzg/gjOLDbgsR5tA1tCw6ij/QIqCKma9IHS2XMBFIxl7lQmfJC/H+sB+z2
+        Ygd1vpS+RzM8gMJyfpqnOnNX6wKBgQDACN/LyhKct2oSrQE1YqH/YmtHw/cpA1Hj
+        nRxr+i6Nu/LZ2GrHEcL1DxiVT25GW8GWZi2VmoU+teO9Q6DG/C8bJ6Bhk7dUoZKm
+        Fuk+elezj+G7h/0qMhi8LeX8cVADpLolQSfmU3KPTOTQqgMrkIxagB2JRAbIu+Ys
+        p2lEwHzoNQKBgAkZbI9sHFKOU8pLHC8QbLrwnakerSeHGDVuTJaohOa8dzN388/W
+        pHBbHvLhl2uwR/OzZIoe9lwdDbsXGVDetb7axxY7Wspb6R0Qj/2/0AnetToDaVVw
+        3LAmX2vjNdlijaPaJ94HrtGGKp0RTdkjZPDicbyY3lhLFcUIQZGhh1zzAoGADzgk
+        1HfdZcI7i+NeNybsA9t++R8U1ZFHyixHdl9LlTwSESXPwJstwlJB9oNnD/hxrUPH
+        1RV7/e5YcEWN1ndiHFrVoSYd3302rCcgsSztCnQaxcwPSmrR/wf8NDeeycsiXZV+
+        Xgi7CZRkhg0TVz6LgRiqPpi/mOUbZuqVszc2LwkCgYAq+xbpGkjlDkVnPXjQa/n0
+        ZZx1OtTKYvQgfh265ZT0nqoDSSC7FrRUqvAr8q89t9EeqI8lGE+HIgcg/HTBTJkW
+        /x44ibvX2LjhpHCg5bYebAv+7mi+S+/4+L2E6HzhYXoc0LlEsr//SNU0TO80Nd/N
+        5YFM5It3Hyix8C6BdjoVaA==
+        -----END PRIVATE KEY-----
+  - name: vfdbricks-aws-app-jobstorage-ssl
+    app: vfdbricks-aws-app
+    type: kubernetes.io/tls
+    stringData:
+      tls.crt: |-
+        -----BEGIN CERTIFICATE-----
+        MIIDWTCCAkGgAwIBAgIUD/za0ELKWRFji+7oMvWbb/UEY6MwDQYJKoZIhvcNAQEL
+        BQAwFTETMBEGA1UEAxMKa3ViZXJuZXRlczAeFw0yNDA3MzAwODM5MDBaFw0yNTA3
+        MzAwODM5MDBaMEExPzA9BgNVBAMTNnZmZGJyaWNrcy1hd3MtYXBwLWpvYnN0b3Jh
+        Z2UuZGVmYXVsdC5zdmMuY2x1c3Rlci5sb2NhbDCCASIwDQYJKoZIhvcNAQEBBQAD
+        ggEPADCCAQoCggEBAKLZnEYxnsppXjhOWb78IA8ME5NcgfCEUVPz/aGZrivPkR0c
+        Yr/uI2GU0qFAiDg+2oJ7JJUl03dg1MF1Jhfn+kbEvKoUzoJ11Pknu62y0Z2ZIf5o
+        FwgxYH0e/gHrGQSeHUj3yrIwsAJ6OOM54KIXUCF48gq9Ynbi5YGZ/8sNIqKzgBZg
+        msQ+qQ/064Xsd7zkJ9Gin43HmgCKMHmziwAnKVEVzRKQYh65Ap2pfyKVhx1ebAIx
+        iRCTiRIQk5ZU9k+QixAbNnSXIfEF2eHAg7wpQwML5pfzajFVtIBtxHapvF+r3YyS
+        iQQA0ycMBzf8Mss3pEmUuK44Ox52ehdZC22jjrECAwEAAaN1MHMwDgYDVR0PAQH/
+        BAQDAgWgMBMGA1UdJQQMMAoGCCsGAQUFBwMBMAwGA1UdEwEB/wQCMAAwHQYDVR0O
+        BBYEFGTcdLsI8l40rmZe0elioiL2/a2NMB8GA1UdIwQYMBaAFJohCKDmaAyAW7y4
+        rM02sYOnte9PMA0GCSqGSIb3DQEBCwUAA4IBAQBQxz3x0EG5/GZxzMUHQeddjr9a
+        pjEfEZ43u1sYuUwDCr1yqhXnsgjHtDDdXlToMbFTMGuTnPliWnfer01u6tD3KEec
+        D2LJuvzYWuGeq4YqSJHVf3Ak4Mwxx2TDLIHUNZbkBBRn8LDTgvCEz5do1Yh8ssyw
+        +0AJO/rl1IGxj1n8NP1CT79cqqZkUAKXe1gWZjR3Hgwo7xoYe8s7XnJ9HjTiHw6C
+        POMI/Tu39kH8Lo9nZqn+fbtJC1nWsmss+Km8W9nkUCpd8IzVmmLhHtf5Qj0WqzED
+        IwJQMLLIyaqitgKIkV3OjwyJS9rrX8bWRFQnbqN/TkYrjchMFYozCfAMjwH7
+        -----END CERTIFICATE-----
+      tls.key: |-
+        -----BEGIN PRIVATE KEY-----
+        MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQCi2ZxGMZ7KaV44
+        Tlm+/CAPDBOTXIHwhFFT8/2hma4rz5EdHGK/7iNhlNKhQIg4PtqCeySVJdN3YNTB
+        dSYX5/pGxLyqFM6CddT5J7utstGdmSH+aBcIMWB9Hv4B6xkEnh1I98qyMLACejjj
+        OeCiF1AhePIKvWJ24uWBmf/LDSKis4AWYJrEPqkP9OuF7He85CfRop+Nx5oAijB5
+        s4sAJylRFc0SkGIeuQKdqX8ilYcdXmwCMYkQk4kSEJOWVPZPkIsQGzZ0lyHxBdnh
+        wIO8KUMDC+aX82oxVbSAbcR2qbxfq92MkokEANMnDAc3/DLLN6RJlLiuODsednoX
+        WQtto46xAgMBAAECggEAD8ntXtjcvl8s5WSjSuMC8LKJC1aCuqD5iZw0UQCnZFQB
+        i8L+yAD8qS9WpI+vJVTitpfd2iAKup5GwmLrSJITL91PNWZDB18JQQbbKWIW9KKu
+        Kw5IfWDcLAVfNyxmBo6V5Ecx/ci+p97VuSIZZ12/RR+GyAfIjiI9gi0+IZ+qZf+9
+        iCHXkefs2gFxVXo1BvBpBqNXDTOQ5hl7mfFARnbLJXj7BCrANQv+qIZEgx96FjAa
+        Bj5H97P21uqbgAtxwgTPhgIvcKoJUM89Un8z3xNIpo00afh0XihiVLcO6xVRVRWO
+        3yL0oPuOQLWdk4it378SzYlTMtMVjCGGuRsZhLjE4QKBgQDdgwWmjlHd0I6p+yIo
+        Ic/g32FdVyyrf65VwhRCMtyNbLdffpj2sfjT3++fRi5KT4Esn732F/LYHkMmLJpq
+        vEdzuuZkYltukPCXCsAovaj3fN+ONEpDD1qfEZ5W79XX7xgmNLoF+I4avuA63y3D
+        BZUeRigsXM/1O7oM2YkI5B0mxQKBgQC8NHVQucXX+2D244bD6njsAsJHRJnhTUXT
+        +MbCaEheUaEMHI67crSXT9v/jZjn98IA11wJV7a/gG90jusP08531WtlGA5V3pHp
+        aFhVQwcIz6rQzsvJzCI5utIuq1IQBFLFaqCuE5RFpslRqLsKd4P2PE7I6FIZRsWo
+        rvPsTfcm/QKBgQCWvTC9NSB06BYNin6l/Mxv5NNnJ4mYc1z5swcCPYZlH1RyQb5q
+        MpZ36G4yXxnlK9FlwpcMvyNc+ssLUVMLy3B8SvW53k0GIs/2mTRHBTnUoT+oj+Dx
+        XaN3mA++bZuCRIyUg1EL+ycJAFeq+HE1w7jET03LUqWZ5rknQWnFiSZlWQKBgQC3
+        EIOoYPs7ac3YeFpGyRST5N8auXTAfQxV8h9LTGpQLDBten2vgRR+NfS1MAMyZ4Ey
+        lkh04fflcEV5Z+bnP0wOre5HqE2RYuwk0BVT4d2+yVjKwMvi3wfPhZQaRxSMddgZ
+        JO1kRbEsyt356xj8RmJ6qhCsRaZN5dQvjvW+vduQ9QKBgQCCG25rAysg5OmagCfa
+        j64s0b3P5jm0yKiQ9mwdWUAuUBT/XD6rQFSj0GSWkDTqjSFftSLXUknMUv5JN+zT
+        zBBPIFwYseVMeu+oWufuMREBN1UzLORMNSBvO+2f+pSqwYLw6C1JesK7BZ9vIJll
+        amrG1GlejT91bZt6UugtbbEyIQ==
+        -----END PRIVATE KEY-----

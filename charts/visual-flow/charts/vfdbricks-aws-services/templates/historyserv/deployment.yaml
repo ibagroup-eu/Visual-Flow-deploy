@@ -1,0 +1,43 @@
+{{- if .Values.historyserv }}
+{{- $partName := "historyserv" }}
+{{- with .Values.historyserv }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+spec:
+  replicas: {{ default 1 .deployment.replicas }}
+  selector:
+    matchLabels:
+      name: {{ $.Release.Name }}-{{ $partName }}
+      app: {{ $.Release.Name }}
+      project: {{ $.Values.project }}
+  template:
+    metadata:
+      labels:
+        name: {{ $.Release.Name }}-{{ $partName }}
+        app: {{ $.Release.Name }}
+        project: {{ $.Values.project }}
+    spec:
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecret }}
+      containers:
+        - name: {{ $partName }}
+          image: {{ .deployment.image.repository }}:{{ .deployment.image.tag }}
+          imagePullPolicy: {{ .deployment.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ default "8080" .configFile.server.port }}
+          volumeMounts:
+            - name: history-config
+              mountPath: "/config/"
+      volumes:
+        - name: history-config
+          configMap:
+            name: {{ $.Release.Name }}-{{ $partName }}-history-config
+{{- end }}
+{{- end }}

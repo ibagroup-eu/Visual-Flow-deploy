@@ -1,0 +1,14 @@
+# release name: vf-app
+vfdbricks-aws-services:
+  install: true
+  databricks:
+    configFile:
+      superusers:
+        - your-github-nickname
+  frontend:
+    deployment:
+      secretVariables:
+        GITHUB_APP_ID: "DUMMY_ID"
+        GITHUB_APP_SECRET: "DUMMY_SECRET"
+vfdbricks-aws-secrets:
+  install: true

@@ -1,0 +1,15 @@
+apiVersion: v2
+name: vfdbricks-aws-app
+description: Visual Flow for Databricks application
+type: application
+version: 1.0.0
+appVersion: 1.0.0
+dependencies:
+- name: vfdbricks-aws-services
+  version: 1.0.0
+  repository: file://./charts/vfdbricks-aws-services
+  condition: vfdbricks-aws-services.install
+- name: vfdbricks-aws-secrets
+  version: 1.0.0
+  repository: file://./charts/vfdbricks-aws-secrets
+  condition: vfdbricks-aws-secrets.install
