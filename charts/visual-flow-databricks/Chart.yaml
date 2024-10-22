@@ -1,0 +1,23 @@
+apiVersion: v2
+name: visual-flow-databricks
+description: Visual Flow for Databricks application
+type: application
+version: 0.2.1
+appVersion: 0.2.1
+dependencies:
+- name: vfdbricks-azure-services
+  version: 0.2.1
+  repository: file://./charts/vfdbricks-azure-services
+  condition: vfdbricks-azure-services.install
+- name: vfdbricks-azure-secrets
+  version: 0.2.1
+  repository: file://./charts/vfdbricks-azure-secrets
+  condition: vfdbricks-azure-secrets.install
+- name: postgresql
+  version: 0.2.1
+  repository: file://./charts/postgresql
+  condition: postgresql.install
+- name: redis
+  version: 0.2.1
+  repository: file://./charts/redis
+  condition: redis.install

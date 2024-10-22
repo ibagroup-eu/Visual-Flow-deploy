@@ -1,0 +1,48 @@
+{{- if .Values.jobstorage }}
+{{- $partName := "jobstorage" }}
+{{- with .Values.jobstorage }}
+{{- if eq .external.type "route" }}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}-jobstorage
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  {{- if .external.annotations }}
+  annotations: {{ toYaml .external.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  host: "{{ .external.host }}.{{ .external.defaultdns }}"
+  path: {{ default "/" .subPath }}
+  to:
+    kind: Service
+    name: {{ $.Release.Name }}-{{ $partName }}
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+  {{- if .external.ssl }}
+    {{- if .external.ssl.termination }}
+    termination: {{ .external.ssl.termination }}
+    {{- else }}
+    termination: "Reencrypt"
+    {{- end }}
+    {{- if and .external.ssl.cert .external.ssl.key }}
+    certificate: |-
+      {{- .external.ssl.cert | nindent 6 }}
+    key: |-
+      {{- .external.ssl.key | nindent 6 }}
+    {{- end }}
+    {{- if .external.ssl.additionalFields }}
+    {{- toYaml .external.ssl.additionalFields | nindent 4 }}
+    {{- end }}
+  {{- else }}
+    termination: "Reencrypt"
+  {{- end }}
+  wildcardPolicy: None
+{{- end }}
+
+{{- end }}
+{{- end }}

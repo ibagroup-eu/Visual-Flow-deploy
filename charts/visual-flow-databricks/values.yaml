@@ -1,0 +1,21 @@
+# release name: vf-app
+postgresql:
+  install: true
+redis:
+  install: true
+vfdbricks-azure-services:
+  install: true
+  databricks:
+    configFile:
+      superusers:
+        - <YOUR_GITHUB_USER_HERE>
+  frontend:
+    deployment:
+      secretVariables:
+        GITHUB_APP_ID: <YOUR_GITHUB_APP_ID_HERE>
+        GITHUB_APP_SECRET: <YOUR_GITHUB_APP_SECRET_HERE>
+    service:
+      annotations:
+        service.beta.kubernetes.io/azure-dns-label-name: <DNS_NAME_FOR_YOUR_APP>
+vfdbricks-azure-secrets:
+  install: true
