@@ -1,0 +1,57 @@
+{{- if .Values.jobstorage }}
+{{- $partName := "jobstorage" }}
+{{- with .Values.jobstorage }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+spec:
+  replicas: {{ default 1 .deployment.replicas }}
+  selector:
+    matchLabels:
+      name: {{ $.Release.Name }}-{{ $partName }}
+      app: {{ $.Release.Name }}
+      project: {{ $.Values.project }}
+  template:
+    metadata:
+      labels:
+        name: {{ $.Release.Name }}-{{ $partName }}
+        app: {{ $.Release.Name }}
+        project: {{ $.Values.project }}
+    spec:
+      imagePullSecrets:
+        - name: {{ $.Values.imagePullSecret }}
+      serviceAccountName: {{ .deployment.serviceAccount.name }}
+      containers:
+        - name: {{ $partName }}
+          image: {{ .deployment.image.repository }}:{{ .deployment.image.tag }}
+          imagePullPolicy: {{ .deployment.image.pullPolicy }}
+          ports:
+            - name: https
+              containerPort: {{ default "8080" .configFile.server.port }}
+          {{- if .deployment.keystoreSecret }}
+          env:
+            - name: KEYSTORE_PASS
+              valueFrom: 
+                secretKeyRef:
+                  name: {{ tpl (.deployment.keystoreSecret.name) $ }}
+                  key: {{ .deployment.keystoreSecret.key }} 
+          {{- end }} 
+          volumeMounts:
+            - name: jobstorage-config
+              mountPath: "/config/"
+            - name: jobstorage-ssl
+              mountPath: "/ssl/"
+      volumes:
+        - name: jobstorage-config
+          configMap:
+            name: {{ $.Release.Name }}-{{ $partName }}-config
+        - name: jobstorage-ssl
+          secret:
+            secretName: {{ .deployment.sslSecret }}
+{{- end }}
+{{- end }}

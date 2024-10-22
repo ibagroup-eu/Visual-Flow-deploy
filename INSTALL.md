@@ -1,23 +1,21 @@
 # Installation Visual Flow for Databricks to Amazon Elastic Kubernetes Service (EKS)
 
-
 1. [Prerequisite Installation](#prerequisites)
     - [Setting up prerequisite tools](#prereqtools)
     - [Clone Visual Flow repository](#clonevfrepo)
     - [Create EKS cluster](#createcluster)
     - [Install AWS Load Balancer (ALB) to EKS](#installalb)
     - [Install AWS EBS CSI driver to EKS](#installebsdriver)
-    - [Install Redis and PostgreSQL](#settingupdbs) 
-2. [Installation of Visual Flow for Databricks](#installvffordbricks)
-    - [Install Visual Flow chart](#installvfchart)
     - [Configure GitHub OAuth](#oauthsetup)
-    - [Complete the installation process](#completeinstall)
+2. [Installation of Visual Flow for Databricks](#installvffordbricks)
+    - [Install Visual Flow for Databricks chart](#installvfchart)
 3. [Use Visual Flow](#usevf)
 4. [Delete Visual Flow](#uninstallvf)
 
+
 ## <a id="prerequisites">Prerequisite Installation</a>
 
-To install Visual Flow for Databricks you should have software installed below. Please use official documentation to perform prerequisite installation.
+To install Visual Flow for Databricks you should have the software below installed. Please use the official documentation to perform prerequisite installation.
 
 ## <a id="prereqtools">Setting up prerequisite tools</a>
 
@@ -30,19 +28,19 @@ To install Visual Flow for Databricks you should have software installed below. 
 >[!IMPORTANT]
 >All the actions are recommended to be performed from the admin/root AWS account.
 
-If you have just installed the AWS CLI, then you need to log in using following command:
+If you have just installed the AWS CLI, then you need to log in using the following command:
 
 ```bash
 aws configure
 ```
 
 ## <a id="clonevfrepo">Clone Visual Flow repository</a>
-Clone (or download) the [Amazon for Databricks branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon-databricks) using following command:
+Clone (or download) the [Amazon for Databricks branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon-databricks) using the following command:
 ```bash
 git clone -b amazon-databricks https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-deploy
 ```
 >[!NOTE]
->This `Visual-Flow-deploy` directory will be used later during application installation steps.
+>This `Visual-Flow-deploy` directory will be used later during the application installation steps.
 
 ## <a id="createcluster">Create EKS cluster</a>
 Visual Flow should be installed on EKS cluster.
@@ -51,7 +49,7 @@ Visual Flow should be installed on EKS cluster.
 > 
 > Additionally, make sure you use one of the latest [K8s version](https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar) supported by EKS.
 
-You can create cluster using following commands:
+You can create a cluster using the following commands:
 ```bash
 # Create EKS Regular cluster (EC2 instance type 'm5.large' with one Node) in us-east-1 region and 1.29 K8s version
 export CLUSTER_NAME=visual-flow
@@ -75,7 +73,7 @@ eksctl create cluster \
     --managed 
 
 # duration: ~30min
-# if creation failed delete cluster using following command and repeat from beginning
+# if creation failed delete the cluster using the following command and repeat from the beginning
 # eksctl delete cluster --region us-east-1 --name $CLUSTER_NAME
 
 # check access
@@ -84,7 +82,7 @@ kubectl get pods --all-namespaces
 ```
 
 >[!TIP]
->For additional info check following guide:
+>For additional info check the following guide:
 >
 ><https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html>
 
@@ -95,7 +93,7 @@ AWS Load Balancer allows you to access applications on EKS from the Internet by 
 >It's recommended to check [kuberneres-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller/tree/v2.8.1) GitHub page to make sure v2.8.1 is not outdated.
 >Otherwise, use the latest version of [iam_policy.json](https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.1/docs/install/iam_policy.json) file for stable ALB work.
 >
-You can install ALB using following commands:
+You can install ALB using the following commands:
 ```bash
 # add ALB policy
 curl -o iam_policy.json https://raw.githubusercontent.com/kubernetes-sigs/aws-load-balancer-controller/v2.8.1/docs/install/iam_policy.json
@@ -114,7 +112,7 @@ export VPC_ID=$(aws eks describe-cluster --name $CLUSTER_NAME | grep vpc- | cut 
 
 helm upgrade -i aws-load-balancer-controller eks/aws-load-balancer-controller --set clusterName=$CLUSTER_NAME --set region=$AWS_REGION --set vpcId=$VPC_ID --set serviceAccount.create=false --set serviceAccount.name=aws-load-balancer-controller -n kube-system
 
-# wait until all pods will be ready
+# wait until all pods are ready
 kubectl get pods --all-namespaces
 ```
 
@@ -126,8 +124,8 @@ kubectl get pods --all-namespaces
 ><https://docs.aws.amazon.com/eks/latest/userguide/network-load-balancing.html>
 
 ## <a id="installebsdriver">Install AWS EBS CSI driver to EKS</a>
-You need to be able to create Persitent Volumes (PV) using Storage Class (SC) in your EKS cluster.<BR>
-One way to achieve this - Install AWS EBS CSI driver.
+You need to be able to create Persitent Volumes (PVs) using Storage Class (SC) in your EKS cluster.<BR>
+You can achieve this using AWS EBS CSI driver.
 
 ```bash
 # create IAM service account
@@ -145,7 +143,7 @@ eksctl create addon --name aws-ebs-csi-driver --cluster $CLUSTER_NAME \
     --service-account-role-arn arn:aws:iam::${ACCOUNT_ID}:role/AmazonEKS_EBS_CSI_DriverRole \
     --force
 
-# wait until all pods will be ready
+# wait until all pods are ready
 kubectl get pods --all-namespaces
 ```
 
@@ -154,115 +152,81 @@ kubectl get pods --all-namespaces
 >
 ><https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html>
 
-## <a id="settingupdbs">Install Redis & PostgreSQL</a>
-Some functionality of Visual Flow application requires to have Redis & PosgreSQL dbs. Both of them with custom and default configs included in installation as a separate helm charts (values files with source from bitnami repo). 
+## <a id="oauthsetup">Configure GitHub OAuth</a>
 
-<https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/amazon-databricks/charts/dbs>
+  1. Go to GitHub user's OAuth apps (`https://github.com/settings/developers`) or organization's OAuth apps (`https://github.com/organizations/<ORG_NAME>/settings/applications`).
+  2. Click the **Register a new application** or the **New Org OAuth App** button.
+  3. Fill in the required fields:
+     - Set **Homepage URL** to `https://visual-flow-dummy-url.com/vf/ui/`
+     - Set **Authorization callback URL** to `https://visual-flow-dummy-url.com/vf/ui/callback`
+  4. Click the **Register application** button.
+  5. Click **Generate a new client secret** and save your `Client ID\Client secret` pair, you will need it [later](#installvfchart).
 
-You can get them and install on you cluster using following steps.
+>[!NOTE]
+>Make sure to copy client secret before you refresh or close the web page. The value will be hidden.<BR>
+>In case you lost your client secret, just create a new `Client ID\Client secret` pair.
+>
+>`visual-flow-dummy-url.com` is a dummy URL. After [Install](#installvffordbricks) do not forget to update **Homepage URL** and **Authorization callback URL** fields.
 
-#### 1. Add 'bitnami' repository to helm repo list
-```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
-helm repo update
-```
-#### 2. Navigate to Visual-Flow-deploy/charts/dbs directory
-Go to the "[dbs](./charts/dbs)" directory of the downloaded 
-"[Visual-Flow-Deploy](#clonevfrepo)" repository with the following command:
-    
-```bash
-cd Visual-Flow-deploy/charts/dbs
-```
-#### 3. Redis (for Session and Job's execution history)
-Use helm tool to install `Redis` database service into the `visual-flow` cluster:
-```bash
-helm install redis -f bitnami-redis/values.yaml bitnami/redis
-```
-#### 4. PostgreSQL (History service)
-Use helm tool to install `PostgreSQL` database server into the `visual-flow` cluster:
-```bash
-helm install pgserver -f bitnami-postgresql/values.yaml bitnami/postgresql
-```
-To check that both services Ready and Running use following kubectl command:
-```bash
-kubectl get pods
-```
-The command output shows you running pods with installed software.
-```bash
-NAME                    READY   STATUS    RESTARTS   AGE
-pgserver-postgresql-0   1/1     Running   0          2m59s
-redis-master-0          1/1     Running   0          3m23s
-```
-
-Now it's fine to navigate back to your home directory and proceed with Visual Flow application installation:
-```bash
-cd ../../..
-```
-
-
->[!TIP]
-> It is recommended to save output of the installation commands which contains helpful info with short guide how to get access to pod & dbs and show default credentials.
 
 ## <a id="installvffordbricks">Installation of Visual Flow for Databricks</a>
 
-During next steps you will create Visual Flow application within your EKS cluster.
+During the next steps you will create Visual Flow application within your EKS cluster.
 
 >[!NOTE]
 >Before you start with Visual Flow for Databricks installation, make sure you have completed all steps from [Prerequisite Installation](#prerequisites).<BR>
->If you had a break during this installation process, make sure you are still working with your EKS cluster (visual-flow) and databases are up and running
->```bash
->kubectl get pods
->```
->
->The command output should be like this:
->
->```bash
->NAME                    READY   STATUS    RESTARTS   AGE
->pgserver-postgresql-0   1/1     Running   0          2m59s
->redis-master-0          1/1     Running   0          3m23s
->```
 
-## <a id="installvfchart">Install Visual Flow chart</a>
-1. Go to the directory "[visual-flow](./charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
+## <a id="installvfchart">Install Visual Flow for Databricks chart</a>
+1. Go to the directory "[visual-flow-databricks](./charts/visual-flow-databricks)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
     ```bash
-    cd Visual-Flow-deploy/charts/visual-flow
+    cd Visual-Flow-deploy/charts/visual-flow-databricks
     ```
 
-2. Set superusers in [values.yaml](./charts/visual-flow/values.yaml).<BR>
-    Specify the superusers real GitHub nicknames in [values.yaml](./charts/visual-flow/values.yaml) in the yaml list format:
-    ```yaml
-    ...
-    superusers:
-      - your-github-nickname
-      # - another-superuser-nickname
-    ...
+2. Install Visual Flow for Databricks application Helm chart:
+    ```bash
+    # Admin users for this app. You can have more than 1 github user, see an example below
+    export GITHUB_USER_LIST="GitHubUser1,GitHubUser2"
+
+    # Get your 'Client ID' and 'Client secret' from [Create a GitHub OAuth app](#oauthsetup) section
+    export GITHUB_APP_ID=<YOUR_GITHUB_APP_ID>
+    export GITHUB_APP_SECRET=<YOUR_GITHUB_APP_SECRET>
+
+    # Set the latest available version
+    export VF_HELM_VERSION=0.2.1
+
+    # Helm install
+    helm upgrade -i vfdbricks-aws-app . -n default \
+    --set vfdbricks-aws-services.databricks.configFile.superusers="{${GITHUB_USER_LIST}}" \
+    --set vfdbricks-aws-services.frontend.deployment.secretVariables.GITHUB_APP_ID="${GITHUB_APP_ID}" \
+    --set vfdbricks-aws-services.frontend.deployment.secretVariables.GITHUB_APP_SECRET="${GITHUB_APP_SECRET}" \
+    --version ${VF_HELM_VERSION}
     ```
-  >[!IMPORTANT]
-  >New Visual Flow users will have no access in the app.<BR>
-  >There should be at least 1 Github user as superuser(admin), but you can specify multiple superusers.
 
-3. Install the app using the updated [values.yaml](./charts/visual-flow/values.yaml) file with the following command:
-
->[!NOTE]
->Current installation is configured to work on `default` namespace of your cluster.<BR>
+3. Make sure all Visual Flow services and databases (Redis + Postgres) are up and running:
 
     ```bash
-    helm upgrade -i vfdbricks-aws-app . -f values.yaml
+    kubectl get pods -n default
     ```
 
-4. Check that the app is successfully installed and all pods are running with the following command:
-
+   Expected output:
     ```bash
-    kubectl get pods --all-namespaces
+    NAME                                              READY   STATUS    RESTARTS   AGE
+    vfdbricks-aws-app-databricks-57b798b5d5-l86f7   1/1     Running   0          63s
+    vfdbricks-aws-app-frontend-695c4f66b6-r466z     1/1     Running   0          63s
+    vfdbricks-aws-app-historyserv-bfc8d69dc-t929m   1/1     Running   0          63s
+    vfdbricks-aws-app-jobstorage-84658ff954-k5v58   1/1     Running   0          63s
+    vfdbricks-aws-app-postgresql-0                  1/1     Running   0          63s
+    vfdbricks-aws-app-redis-master-0                1/1     Running   0          63s
     ```
 
-5. Get the generated app's hostname with the following command:
+4. Get the generated app's hostname with the following command:
 
     ```bash
     kubectl get svc vfdbricks-aws-app-frontend -o yaml | grep hostname | cut -c 17-
     ```
 
-    Replace the string `<HOSTNAME_FROM_SERVICE>` with the generated hostname in the next steps.
+    Replace `visual-flow-dummy-url.com` from [OAuth step](#oauthsetup) with your app's hostname in **Homepage URL** and **Authorization callback URL** fields. Save changes.
+
 >[!NOTE]
 >If you have your own hostname or you are able to create it using [Route53](https://aws.amazon.com/route53/) for Visual Flow application you can use it instead of autogenereted <HOSTNAME_FROM_SERVICE>.<BR>
 >In this case you need:
@@ -277,33 +241,6 @@ During next steps you will create Visual Flow application within your EKS cluste
 > 3) Use your own hostname as a <HOSTNAME_FROM_SERVICE> in the next steps
 
 
-## <a id="oauthsetup">Create a GitHub OAuth app</a>
-
-  1. Go to GitHub user's OAuth apps (`https://github.com/settings/developers`) or organization's OAuth apps (`https://github.com/organizations/<ORG_NAME>/settings/applications`).
-  2. Click the **Register a new application** or the **New Org OAuth App** button.
-  3. Fill the required fields:
-     - Set **Homepage URL** to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/`
-     - Set **Authorization callback URL** to `https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`
-  4. Click the **Register application** button.
-  5. Replace "DUMMY_ID" with the Client ID value in [values.yaml](./charts/visual-flow/values.yaml).
-  6. Click **Generate a new client secret** and replace in [values.yaml](./charts/visual-flow/values.yaml) "DUMMY_SECRET" with the generated Client secret value
->[!NOTE]
->Make sure to copy client secret before you refresh or close the web page. The value will be hidden.<BR>
->In case you lost your client secret, just remove it and create a new `Client ID\Client secret` pair.
-
-## <a id="completeinstall">Complete the installation process</a>
-1. Upgrade the app in EKS cluster using updated values.yaml:
-
-    ```bash
-    helm upgrade vfdbricks-aws-app . -f values.yaml
-    ```
-
-2. Wait until the update is installed and all pods are running:
-
-    ```bash
-    kubectl get pods --all-namespaces
-    ```
-
 ## <a id="usevf">Use Visual Flow</a>
 
 >[!NOTE]
@@ -312,7 +249,7 @@ During next steps you will create Visual Flow application within your EKS cluste
 >Visual Flow can work with Databricks created on any cloud (AWS, Azure, GCP).<BR>
 >But if you are going to create a new Databricks environment, the best option is to have Databricks and Visual Flow on the same [cloud](https://www.databricks.com/product/aws)
 
-1. All Visual Flow users (including superusers) need active Github account in order to be authenticated in application. Setup Github profile as per following steps:
+1. All Visual Flow users (including superusers) need active Github account in order to be authenticated in the application. Setup Github profile as per the following steps:
 
     1. Navigate to the [account settings](https://github.com/settings/profile)
     2. Go to **Emails** tab: set email as public by unchecking **Keep my email addresses private** checkbox
@@ -328,6 +265,7 @@ During next steps you will create Visual Flow application within your EKS cluste
 
 4. See the guide on how to work with the Visual Flow at the following link: [Visual_Flow_User_Guide.pdf](https://github.com/ibagroup-eu/Visual-Flow/blob/main/Visual_Flow_User_Guide.pdf)
 
+
 ## <a id="uninstallvf">Delete Visual Flow</a>
 1. If the app is no longer required, you can delete it using the following command:
 
@@ -341,21 +279,6 @@ During next steps you will create Visual Flow application within your EKS cluste
     kubectl get pods --all-namespaces
     ```
 
-#### Delete additional components
-
-If you do no need them anymore - you can also delete and these additional components:
-
-1. Redis database
-
-```bash
-helm uninstall redis
-```
-
-2. PostgreSQL database
-```bash
-helm uninstall pgserver
-```
-
 #### Delete EKS
 
 1. If the EKS is no longer required, you can delete it using the following guide:
@@ -363,7 +286,8 @@ helm uninstall pgserver
 ```bash
 # for visual-flow cluster created in us-east-1 region.
 export AWS_REGION=us-east-1
-eksctl delete cluster --name visual-flow --region $AWS_REGION
+export CLUSTER_NAME=visual-flow
+eksctl delete cluster --name $CLUSTER_NAME --region $AWS_REGION
 ```
 
 >[!TIP]
