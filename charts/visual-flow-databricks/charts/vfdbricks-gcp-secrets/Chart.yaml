@@ -1,0 +1,6 @@
+apiVersion: v2
+name: vfdbricks-gcp-secrets
+description: Visual Flow for Databricks Secrets
+type: application
+version: 0.2.1
+appVersion: 0.2.1

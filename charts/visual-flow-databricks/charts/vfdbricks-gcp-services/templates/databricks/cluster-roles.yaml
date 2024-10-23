@@ -1,0 +1,155 @@
+{{- if .Values.databricks }}
+{{- $partName := "databricks" }}
+{{- with .Values.databricks }}
+{{- if .createRoles }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-viewer-rules
+  labels:
+    name: vfdbricks-dev-viewer-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-aggregate-to-viewer: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources: 
+      - "resourcequotas"
+      - "configmaps"
+      - "pods"
+      - "pods/log"
+      - "pods/status"
+      - "secrets"
+    verbs:
+      - "get"
+      - "list"
+      - "watch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-viewer
+  labels:
+    name: vfdbricks-dev-viewer
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-viewer: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-operator-rules
+  labels:
+    name: vfdbricks-dev-operator-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vf-aggregate-to-operator: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-operator
+  labels:
+    name: vfdbricks-dev-operator
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-viewer: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-operator: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-editor-rules
+  labels:
+    name: vfdbricks-dev-editor-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-aggregate-to-editor: "true"
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - "configmaps"
+      - "secrets"
+      - "resourcequotas"
+    verbs:
+      - "update"
+      - "patch"
+      - "create"
+      - "delete"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-editor
+  labels:
+    name: vfdbricks-dev-editor
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-viewer: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-operator: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-editor: "true"
+rules: []
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-admin-rules
+  labels:
+    name: vfdbricks-dev-admin-rules
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-aggregate-to-admin: "true"
+rules:
+  - apiGroups:
+      - "rbac.authorization.k8s.io"
+    resources:
+      - "rolebindings"
+    verbs:
+      - "create"
+      - "delete"
+      - "update"
+      - "patch"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vfdbricks-dev-admin
+  labels:
+    name: vfdbricks-dev-admin
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+    vfdbricks-dev-role: "true"
+aggregationRule:
+  clusterRoleSelectors:
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-viewer: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-operator: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-editor: "true"
+    - matchLabels:
+        vfdbricks-dev-aggregate-to-admin: "true"
+rules: []
+{{- end }}
+{{- end }}
+{{- end }}

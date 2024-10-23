@@ -1,0 +1,102 @@
+{{- if .Values.databricks }}
+{{- $partName := "databricks" }}
+{{- with .Values.databricks }}
+{{- if .external.enabled }}
+
+{{- if eq .external.type "ingress" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  {{- if .external.annotations }}
+  annotations: {{ toYaml .external.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  rules:
+  - host: {{ .external.host }}
+    http:
+      paths:
+      - path: {{ default "/" .subPath }}
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ $.Release.Name }}-{{ $partName }}
+            port:
+              number: {{ .service.port }}
+  tls:
+    - hosts:
+        - {{ .external.host }}
+{{- if .external.ssl }}
+{{- if and .external.ssl.cert .external.ssl.key }}
+      secretName: {{ $.Release.Name }}-{{ $partName }}-ingress-ssl
+---
+kind: Secret
+apiVersion: v1
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}-ingress-ssl
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+type: kubernetes.io/tls
+stringData:
+  tls.crt: |-
+    {{- .external.ssl.cert | nindent 4 }}
+  tls.key: |-
+    {{- .external.ssl.key | nindent 4 }}
+{{- end }}
+{{- end }}
+
+{{- end }}
+
+
+{{- if eq .external.type "route" }}
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: {{ $.Release.Name }}-{{ $partName }}
+  labels:
+    name: {{ $.Release.Name }}-{{ $partName }}
+    app: {{ $.Release.Name }}
+    project: {{ $.Values.project }}
+  {{- if .external.annotations }}
+  annotations: {{ toYaml .external.annotations | nindent 4 }}
+  {{- end }}
+spec:
+  host: {{ .external.host }}
+  path: {{ default "/" .subPath }}
+  to:
+    kind: Service
+    name: {{ $.Release.Name }}-{{ $partName }}
+    weight: 100
+  port:
+    targetPort: https
+  tls:
+  {{- if .external.ssl }}
+    {{- if .external.ssl.termination }}
+    termination: {{ .external.ssl.termination }}
+    {{- else }}
+    termination: "Reencrypt"
+    {{- end }}
+    {{- if and .external.ssl.cert .external.ssl.key }}
+    certificate: |-
+      {{- .external.ssl.cert | nindent 6 }}
+    key: |-
+      {{- .external.ssl.key | nindent 6 }}
+    {{- end }}
+    {{- if .external.ssl.additionalFields }}
+    {{- toYaml .external.ssl.additionalFields | nindent 4 }}
+    {{- end }}
+  {{- else }}
+    termination: "Reencrypt"
+  {{- end }}
+  wildcardPolicy: None
+{{- end }}
+
+{{- end }}
+{{- end }}
+{{- end }}
