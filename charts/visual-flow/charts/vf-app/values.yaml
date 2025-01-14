@@ -9,8 +9,8 @@ backend:
   deployment:
     replicas: 1
     image:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend
-      tag: 1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend
       pullPolicy: IfNotPresent
     # variables:
     secretVariables:
@@ -33,14 +33,17 @@ backend:
         name: name
         email: email
     superusers: []
+    host: []
+    port: []
     dbService:
-      host: http://visual-flow-dbservice.visual-flow.svc.cluster.local:9999/
-      port: 9999
+      host: []
+      port: 8080
     notifications:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-notification-service
-      tag: 1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-notification-service
       slack:
-        token: ""
+        token: BOT_TOKEN
+        channelName: CHANNEL_NAME
       mail:
         default-encoding: UTF-8                       # Default-encoding
         host: smtp.gmail.com                          # An IP address or FQDN of the SMTP server
@@ -56,12 +59,16 @@ backend:
               starttls: true
         protocol: smtp
         test-connection: false
+    slackJob:
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-slack-notification
+      appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
       label: vf-app
       prefix: "vf-"
       annotations: {}
     argo:
-      serverUrl: "http://visual-flow-argo-server.visual-flow.svc.cluster.local:2746" # "http://vf-app-argo-server.svc:2746"
+      serverUrl: "http://vf-app-argo-server.default.svc.cluster.local:2746"
       limits:
         cpu: 0.5
         memory: 256Mi
@@ -73,24 +80,23 @@ backend:
         secondsAfterSuccess: 5
         secondsAfterFailure: 360
     sparkJob:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-spark-job
-      tag: 1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-spark-job
+      pullPolicy: IfNotPresent
       jobSA: spark
       jobRB: spark-edit
       addSA: true
+      mountPath: 
       # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
-    slackJob:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-notification-service
-      tag: 1.3.0
-      appAPItoken: "${SLACK_API_TOKEN}"
     pvc:
-      memory: 2Gi
+      memory: 1Gi
       mountPath: "/files" 
     redis:
-      host: redis-master.redis.svc.cluster.local # host: 10.100.26.99
+      recordLogs: true
+      host: redis-master.default.svc.cluster.local # host: 10.100.26.99
       port: 6379
       # username: ${REDIS_USER}
-      # password: "Redis_password"
+      password: SuperStrongPassword
       database: 1
   service:
     type: NodePort
@@ -109,8 +115,8 @@ frontend:
   deployment:
     replicas: 1
     image:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-frontend
-      tag: 1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-frontend
       pullPolicy: IfNotPresent
     variables:
       STRATEGY: GITHUB
@@ -124,23 +130,23 @@ frontend:
       NODE_ENV: 'production' # 'development'
       SESSION_STORE: 'dynamic' # dynamic (requires Redis) / in-memory
       STRATEGY_CALLBACK_URL: "https://localhost/vf/ui/callback"
-      API_SERVER: "https://visual-flow-backend.visual-flow.svc.cluster.local:8080/vf/be/"
-      REDIS_HOST: "redis-master.redis.svc.cluster.local" # Redis host
+      API_SERVER: "https://vf-app-backend:8080/vf/be/"
+      REDIS_HOST: "redis-master.default.svc.cluster.local" # Redis host
       REDIS_PORT: "6379" # Redis port. [Default]: 6379
       REDIS_DB: "1" # Database. [Default]: 0
     secretVariables:
-      GITHUB_APP_ID: "8bfc74c33ef52bc100fb"
-      GITHUB_APP_SECRET: "9b3f8dd962381960cc3ab12d76371f0cb050f4fd"
-      CLIENT_ID: ""
-      CLIENT_SECRET: ""
+      GITHUB_APP_ID: ""
+      GITHUB_APP_SECRET: ""
+      CLIENT_ID: "" # CLIENT_ID for Keycloak.
+      CLIENT_SECRET: "" # ClIENT_SECRET for Keycloak
       REDIS_PASSWORD: 'SuperStrongPassword'
       SESSION_SECRET: 'a597d68350b02f2d'
     sslSecret: vf-app-frontend-ssl
     resources: {}
   service:
-    type: LoadBalancer
+    type: LoadBalancer # NodePort \ LoadBalancer \ ClusterIP
     port: 443
-    # nodePort: 30910
+    # nodePort: 30910 # only in case NodePort
     annotations:
       service.beta.kubernetes.io/aws-load-balancer-type: external
       service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
@@ -160,37 +166,38 @@ dbservice:
   deployment:
     replicas: 1
     image:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend-db-service
-      tag: 1.3.0
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend-db-service
       pullPolicy: IfNotPresent
-    # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
   service:
     type: ClusterIP
     port: 9999
   external:
     enabled: false
-    type: route
-    host: "visual-flow-dbservice"
-    defaultdns: ""
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
 
 # Backend History Service
 historyserv:
   deployment:
     replicas: 1
     image:
-      repository: us-central1-docker.pkg.dev/iron-wave-390316/visual-flow/vf-backend-history-service
-      tag: 1.3.0
-      pullPolicy: IfNotPresent # IfNotPresent # Always
+      repository: ghcr.io/ibagroup-eu/visual-flow
+      tag: 1.4.1-backend-history-service
+      pullPolicy: IfNotPresent
   service:
     type: ClusterIP
     port: 9990
   external:
     enabled: false
-    type: route
-    host: "visual-flow-historyserv"
-    defaultdns: ""
+    type: ingress
+    host: localhost
+    annotations: {}
+    ssl: {}
   configFile:
     postgresql: 
-      # PG_URL: jdbc:postgresql://vf-postgresql.ckzgbpx2qvvk.us-east-1.rds.amazonaws.com:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
-      # PG_USER: postgres # postgres_username
-      # PG_PASS: # postgres_password
+      PG_URL: jdbc:postgresql://pgserver-postgresql.default.svc.cluster.local:5432/postgres # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example
+      PG_USER: postgres # postgres_username
+      PG_PASS: SuperStrongPassword # postgres_password

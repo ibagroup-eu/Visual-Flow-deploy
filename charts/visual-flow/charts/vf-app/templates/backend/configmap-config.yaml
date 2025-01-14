@@ -12,14 +12,14 @@ metadata:
 data:
   application.yaml: |
     server:
-      host: {{ .configFile.host }}
+      host: {{ default "https://localhost:443/vf/ui/" .configFile.host }}
+      port: {{ default "8080" .configFile.port }}
       ssl:
         key-store: /tmp/keystore/tls.p12
         key-store-password: ${KEYSTORE_PASS}
         key-store-type: pkcs12
         key-alias: vf-api
         key-password: ${KEYSTORE_PASS}
-      port: 8080
       tomcat:
         accesslog:
           enabled: true
@@ -32,7 +32,6 @@ data:
       host: "{{ default "http://vf-app-dbservice.default.svc.cluster.local:9999/" .configFile.dbService.host }}"
       port: "{{ default "9999" .configFile.dbService.port }}"
     oauth:
-      provider: github
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
     auth: {{ toYaml .configFile.oauth.fieldsMap | nindent 6 }}
@@ -65,12 +64,15 @@ data:
         serviceAccount: {{ .configFile.sparkJob.jobSA }}
         roleBinding: {{ .configFile.sparkJob.jobRB }}
         master: {{ default "k8s://https://kubernetes.default.svc" .configFile.sparkJob.kubernetesAPI }}
+      config:
+        mountPath: {{ default "/cfg" .configFile.sparkJob.mountPath }}
       slack:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}
     argo: {{- toYaml .configFile.argo | nindent 6 }}
     {{- if .configFile.redis }}
     redis:
+      recordLogs: {{ .configFile.redis.recordLogs }}
       host: {{ .configFile.redis.host }}
       port: {{ .configFile.redis.port }}
       {{- if .configFile.redis }}
@@ -78,9 +80,9 @@ data:
       {{- end }}
       password: {{ .configFile.redis.password }}
       database: {{ .configFile.redis.database }}
-      jobHistoryDatabase: 3
-      pipelineHistoryDatabase: 3
-      logDatabase: 3
+      jobHistoryDatabase: 1
+      pipelineHistoryDatabase: 2
+      logDatabase: 4
     {{- end }}  
 {{- end }}
 {{- end }}

@@ -29,7 +29,7 @@ Visual Flow application is divided into the following repositories:
 - [Visual-Flow-frontend](https://github.com/ibagroup-eu/Visual-Flow-frontend)
 - [Visual-Flow-backend](https://github.com/ibagroup-eu/Visual-Flow-backend)
 - [Visual-Flow-jobs](https://github.com/ibagroup-eu/Visual-Flow-jobs)
-- _**Visual-Flow-deploy**_ (current)
+- [Visual-Flow-deploy](https://github.com/ibagroup-eu/Visual-Flow-deploy) (current)
 - [Visual-Flow-backend-db-service](https://github.com/ibagroup-eu/Visual-Flow-backend-db-service)
 - [Visual-Flow-backend-history-service](https://github.com/ibagroup-eu/Visual-Flow-backend-history-service)
 
@@ -40,7 +40,6 @@ This repository contains helm chart to deploy Visual Flow app with all requireme
 Helm charts in this repository:
 
 - [visual-flow](./charts/visual-flow/) - to deploy Visual Flow application.
-- [dbs](./charts/dbs/) - to deploy Redis/PostgreSQL databases.
 
 ## Installation
 

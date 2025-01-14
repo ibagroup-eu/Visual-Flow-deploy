@@ -1,9 +1,9 @@
 # release name: vf-app-dbs
 
-# helm install redis -n redis -f values.yaml bitnami/redis
-# helm install pgserver -n postgres -f values.yaml bitnami/postgresql
+# helm install redis -f values.yaml bitnami/redis
+# helm install pgserver -f values.yaml bitnami/postgresql
 
-#bitnami-redis:
-#  install: true
-#bitnami-postgresql:
-#  install: true
+bitnami-redis:
+  install: true
+bitnami-postgresql:
+  install: true

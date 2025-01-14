@@ -6,13 +6,7 @@ secrets:
     type: kubernetes.io/dockerconfigjson
     stringData:
       .dockerconfigjson: |-
-        {
-          "auths": {
-            "ghcr.io": {
-              "auth": "RFlhcmFzaGVua2EtaWJhZ3JvdXAtZXU6Z2hwXzc1Mm84dkh1QlFSZXFNTXBmQlVXVnVWR3daTXgwMTBZUVNlMQo="
-            }
-          }
-        }
+        {"auths": {}}
   - name: vf-app-backend-ssl
     app: vf-app
     type: kubernetes.io/tls

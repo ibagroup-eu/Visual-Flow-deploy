@@ -11,7 +11,7 @@
      --zone=us-central1-b
      ``` 
 
-2. Connect via SSH. press yes for everything if asked about different zone press `n`, so it autodetects your vm zone
+2. Connect via SSH. press yes for everything if asked about different   zone press n, so it autodetect your vm zone
      ```bash
      gcloud compute ssh vf-nfs-server
      ```
@@ -29,7 +29,7 @@
      sudo chmod 777 /share
      ```
 
-5. Add this folder to nfs exports
+5. Add this foulder to nfs exports
 
      Install vim (or any other tool for text edit) on your VM
      ```bash
