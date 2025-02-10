@@ -8,8 +8,8 @@ secrets:
       .dockerconfigjson: |-
         {
           "auths": {
-            "ghcr.io": {
-              "auth": "RFlhcmFzaGVua2EtaWJhZ3JvdXAtZXU6Z2hwXzc1Mm84dkh1QlFSZXFNTXBmQlVXVnVWR3daTXgwMTBZUVNlMQo="
+            "visualflow.azurecr.io": {
+              "auth": "dGVzdF91c2VyOmdocF9leGFtcGxldG9rZW4="
             }
           }
         }
