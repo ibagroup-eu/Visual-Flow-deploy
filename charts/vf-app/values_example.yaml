@@ -32,6 +32,7 @@ backend:
     superusers:
       - <username>
     notifications:
+      uiHost: "<UI_HOST>"
       slack:
         botToken: BOT_TOKEN
         channelName: CHANNEL_NAME
@@ -73,7 +74,7 @@ backend:
         secondsAfterSuccess: 5
         secondsAfterFailure: 360
     redis:
-      host: okd4w1.okd.gomel.iba.by
+      host: "<REDIS_HOST>"
       port: 31380
       #  username: ${REDIS_USER}
       password: yourpasswd
@@ -85,10 +86,10 @@ backend:
       jobRB: vf-spark-job-edit
       addSA: true
       # kubernetesAPI: "k8s://https://kubernetes.default.svc"
-    slackJob:
-      repository: ibagroup-eu/visual-flow-slack-notification
-      tag: latest 
-      appAPItoken: "${SLACK_API_TOKEN}"
+  #  slackJob:
+  #    repository: ibagroup-eu/visual-flow-slack-notification
+  #    tag: latest 
+  #    appAPItoken: "${SLACK_API_TOKEN}"
   service:
     type: ClusterIP
     port: 8080
@@ -148,7 +149,7 @@ dbservice:
   deployment:
     replicas: 1
     image:
-      repository: image-registry.openshift-image-registry.svc:5000/vf-dev/vf-backend-db
+      repository: ibagroup-eu/vf-backend-db-service
       tag: latest
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -159,14 +160,13 @@ dbservice:
     enabled: true
     type: route
     host: "vf-prod-dbservice"
-    defaultdns: apps.okd4.okd.gomel.iba.by  
 
 # Backend History Service
 historyserv:
   deployment:
     replicas: 1
     image:
-      repository: ghcr.io/ibagroup-eu/vf-backend-history-service
+      repository: ibagroup-eu/vf-backend-history-service
       tag: latest
       pullPolicy: Always # IfNotPresent
   service:
@@ -176,7 +176,6 @@ historyserv:
     enabled: true
     type: route
     host: "vf-dev-historyserv"
-    defaultdns: apps.okd4.okd.gomel.iba.by
   configFile:
     postgresql: 
       PG_URL: <pg_db_path> # jdbc:postgresql://okd4w1.okd.gomel.iba.by:31433/example

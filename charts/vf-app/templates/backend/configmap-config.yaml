@@ -12,7 +12,7 @@ metadata:
 data:
   application.yaml: |
     server:
-      host: {{ default "https://vf-prod.apps.okd4.okd.gomel.iba.by" .configFile.server.host }}
+      host: {{ .configFile.server.host }}
       ssl:
         key-store: /tmp/keystore/tls.p12
         key-store-password: ${KEYSTORE_PASS}
@@ -32,6 +32,7 @@ data:
       host: "{{ default "http://vf-app-dbservice.default.svc.cluster.local:9999/" .configFile.dbService.host }}"
       port: "{{ default "9999" .configFile.dbService.port }}"  
     oauth:
+      provider: {{ default "github" .configFile.oauth.provider }}
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
     auth: {{ toYaml .configFile.oauth.fieldsMap | nindent 6 }}
@@ -43,7 +44,8 @@ data:
         {{- end }}
         {{- end }}
     notifications:
-      image: {{ default "ghcr.io/ibagomel/vf-notification-service:latest" .configFile.notifications.image }}
+      ui-host: {{ .configFile.notifications.uiHost }}
+      image: {{ .configFile.notifications.image }}
       slack: {{ toYaml .configFile.notifications.slack | nindent 8 }}
       mail: {{ toYaml .configFile.notifications.mail | nindent 8 }}
     namespace:
@@ -66,6 +68,7 @@ data:
         master: {{ default "k8s://https://kubernetes.default.svc" .configFile.sparkJob.kubernetesAPI }}
       config:
         mountPath: {{ default "/cfg" .configFile.sparkJob.config.mountPath }}
+      interactiveSessionTimeout: {{ default "600" .configFile.sparkJob.interactiveSessionTimeout }}
       slack:
         image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
         apiToken: {{ .configFile.slackJob.appAPItoken }}
@@ -78,9 +81,13 @@ data:
       username: {{ .configFile.redis.username }}
       {{- end }}
       password: {{ .configFile.redis.password }}
-      jobHistoryDatabase: 3
-      pipelineHistoryDatabase: 3
-      logDatabase: 3
+      recordLogs: {{ default "false" .configFile.redis.recordLogs }}
+      jobHistoryDatabase: {{ default "1" .configFile.redis.jobHistoryDatabase }}
+      pipelineHistoryDatabase: {{ default "2" .configFile.redis.pipelineHistoryDatabase }}
+      logDatabase: {{ default "3" .configFile.redis.logDatabase }}
+      jobMetadataDatabase: {{ default "4" .configFile.redis.jobMetadataDatabase }}
+      jobDefinitionDatabase: {{ default "5" .configFile.redis.jobDefinitionDatabase }}
+      jobEventDatabase: {{ default "6" .configFile.redis.jobEventDatabase }}
     {{- end }}    
 {{- end }}
 {{- end }}
