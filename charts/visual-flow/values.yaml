@@ -8,7 +8,8 @@ vf-app:
     configFile:
       superusers:
         - your-github-nickname
-      host: https://<HOSTNAME_FROM_SERVICE>/vf/ui/
+      notifications: 
+        uiHost: https://<HOSTNAME_FROM_SERVICE>
   frontend:
     deployment:
       variables:

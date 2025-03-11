@@ -32,6 +32,7 @@ data:
       host: "{{ default "http://vf-app-dbservice.default.svc.cluster.local:9999/" .configFile.dbService.host }}"
       port: "{{ default "9999" .configFile.dbService.port }}"
     oauth:
+      provider: {{ default "github" .configFile.oauth.provider }}
       url:
         userInfo: "{{ .configFile.oauth.userInfo }}"
     auth: {{ toYaml .configFile.oauth.fieldsMap | nindent 6 }}
@@ -43,6 +44,7 @@ data:
         {{- end }}
         {{- end }}
     notifications:
+      ui-host: {{ .configFile.notifications.uiHost }}
       image: "{{ .configFile.notifications.repository }}:{{ .configFile.notifications.tag }}"
       slack: {{ toYaml .configFile.notifications.slack | nindent 8 }}
       mail: {{ toYaml .configFile.notifications.mail | nindent 8 }}
@@ -66,9 +68,6 @@ data:
         master: {{ default "k8s://https://kubernetes.default.svc" .configFile.sparkJob.kubernetesAPI }}
       config:
         mountPath: {{ default "/cfg" .configFile.sparkJob.mountPath }}
-      slack:
-        image: "{{ .configFile.slackJob.repository }}:{{ .configFile.slackJob.tag }}"
-        apiToken: {{ .configFile.slackJob.appAPItoken }}
     argo: {{- toYaml .configFile.argo | nindent 6 }}
     {{- if .configFile.redis }}
     redis:
@@ -79,10 +78,12 @@ data:
       username: {{ .configFile.redis.username }}
       {{- end }}
       password: {{ .configFile.redis.password }}
-      database: {{ .configFile.redis.database }}
-      jobHistoryDatabase: 1
-      pipelineHistoryDatabase: 2
-      logDatabase: 4
+      jobHistoryDatabase: {{ default "1" .configFile.redis.jobHistoryDatabase }}
+      pipelineHistoryDatabase: {{ default "2" .configFile.redis.pipelineHistoryDatabase }}
+      logDatabase: {{ default "3" .configFile.redis.logDatabase }}
+      jobMetadataDatabase: {{ default "4" .configFile.redis.jobMetadataDatabase }}
+      jobDefinitionDatabase: {{ default "5" .configFile.redis.jobDefinitionDatabase }}
+      jobEventDatabase: {{ default "6" .configFile.redis.jobEventDatabase }}
     {{- end }}  
 {{- end }}
 {{- end }}

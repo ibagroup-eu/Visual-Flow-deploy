@@ -10,7 +10,7 @@ backend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-backend
+      tag: 1.5.0-backend
       pullPolicy: IfNotPresent
     # variables:
     secretVariables:
@@ -26,6 +26,7 @@ backend:
         memory: 1Gi
   configFile:
     oauth:
+      provider: "github"
       userInfo: "https://api.github.com/user"
       fieldsMap:
         id: id
@@ -33,14 +34,15 @@ backend:
         name: name
         email: email
     superusers: []
-    host: []
+    host: "https://vf-app-backend.default.svc.cluster.local:8080"
     port: []
     dbService:
       host: []
       port: 8080
     notifications:
+      uiHost: []
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-notification-service
+      tag: 1.5.0-notification-service
       slack:
         token: BOT_TOKEN
         channelName: CHANNEL_NAME
@@ -59,10 +61,6 @@ backend:
               starttls: true
         protocol: smtp
         test-connection: false
-    slackJob:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-slack-notification
-      appAPItoken: "${SLACK_API_TOKEN}"
     namespace:
       label: vf-app
       prefix: "vf-"
@@ -81,7 +79,7 @@ backend:
         secondsAfterFailure: 360
     sparkJob:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-spark-job
+      tag: 1.5.0-spark-job
       pullPolicy: IfNotPresent
       jobSA: spark
       jobRB: spark-edit
@@ -90,14 +88,20 @@ backend:
       # kubernetesAPI: "k8s://https://kubernetes.default.svc.cluster.local"
     pvc:
       memory: 1Gi
-      mountPath: "/files" 
+      mountPath: "/files"
+      accessModes: "ReadWriteMany"
     redis:
       recordLogs: true
       host: redis-master.default.svc.cluster.local # host: 10.100.26.99
       port: 6379
       # username: ${REDIS_USER}
       password: SuperStrongPassword
-      database: 1
+      jobHistoryDatabase: 1
+      pipelineHistoryDatabase: 2
+      logDatabase: 3
+      jobMetadataDatabase: 4
+      jobDefinitionDatabase: 5
+      jobEventDatabase: 6
   service:
     type: NodePort
     port: 8080
@@ -116,7 +120,7 @@ frontend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-frontend
+      tag: 1.5.0-frontend
       pullPolicy: IfNotPresent
     variables:
       STRATEGY: GITHUB
@@ -140,8 +144,8 @@ frontend:
     secretVariables:
       GITHUB_APP_ID: ""
       GITHUB_APP_SECRET: ""
-      CLIENT_ID: 'vf-oidc'
-      CLIENT_SECRET: 'F85KC8aFWyAyK0k4aL3eSwKU5IzfyBoK'
+      CLIENT_ID: ''
+      CLIENT_SECRET: ''
       REDIS_PASSWORD: 'SuperStrongPassword'
       SESSION_SECRET: 'a597d68350b02f2d'
     sslSecret: vf-app-frontend-ssl
@@ -170,7 +174,7 @@ dbservice:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-backend-db-service
+      tag: 1.5.0-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
   service:
@@ -179,8 +183,8 @@ dbservice:
   external:
     enabled: false
     type: route
-    host: "vf-dev-dbservice"
-    defaultdns: apps.okd4.okd.gomel.iba.by
+    host: "vf-dbservice"
+    defaultdns: apps.aws.com
 
 # Backend History Service
 historyserv:
@@ -188,7 +192,7 @@ historyserv:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
-      tag: 1.4.1-backend-history-service
+      tag: 1.5.0-backend-history-service
       pullPolicy: IfNotPresent
   service:
     type: ClusterIP
