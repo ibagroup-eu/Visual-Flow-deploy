@@ -56,6 +56,7 @@ This repository contains helm chart to deploy Visual Flow app with all requireme
 Helm charts in this repository:
 
 - [visual-flow](./charts/visual-flow/) - to deploy Visual Flow application.
+- [dbs](./charts/dbs/) - to deploy Redis/PostgreSQL databases.
 
 ## Installation
 
