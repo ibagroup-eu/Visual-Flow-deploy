@@ -140,7 +140,7 @@ frontend:
       API_SERVER: "https://vf-app-backend:8080/vf/be/"
       REDIS_HOST: "redis-master.default.svc.cluster.local" # Redis host
       REDIS_PORT: "6379" # Redis port. [Default]: 6379
-      REDIS_DB: "1" # Database. [Default]: 0
+      REDIS_DB: "0" # Database. [Default]: 0
     secretVariables:
       GITHUB_APP_ID: ""
       GITHUB_APP_SECRET: ""
