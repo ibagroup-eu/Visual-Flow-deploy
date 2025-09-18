@@ -1312,7 +1312,7 @@ rbac:
 serviceAccount:
   ## @param serviceAccount.create Specifies whether a ServiceAccount should be created
   ##
-  create: true
+  create: false
   ## @param serviceAccount.name The name of the ServiceAccount to use.
   ## If not set and create is true, a name is generated using the common.names.fullname template
   ##
@@ -1574,7 +1574,7 @@ volumePermissions:
   ##
   enabled: false
   ## Bitnami Shell image
-  ## ref: https://hub.docker.com/r/bitnami/bitnami-shell/tags/
+  ## ref: https://hub.docker.com/r/bitnami/os-shell/tags/
   ## @param volumePermissions.image.registry Bitnami Shell image registry
   ## @param volumePermissions.image.repository Bitnami Shell image repository
   ## @param volumePermissions.image.tag Bitnami Shell image tag (immutable tags are recommended)
@@ -1584,8 +1584,8 @@ volumePermissions:
   ##
   image:
     registry: docker.io
-    repository: bitnami/bitnami-shell
-    tag: 11-debian-11-r48
+    repository: bitnami/os-shell
+    tag: 11-debian-11-r96
     digest: ""
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.
@@ -1632,8 +1632,8 @@ sysctl:
   ##
   image:
     registry: docker.io
-    repository: bitnami/bitnami-shell
-    tag: 11-debian-11-r48
+    repository: bitnami/os-shell
+    tag: 11-debian-11-r96
     digest: ""
     pullPolicy: IfNotPresent
     ## Optionally specify an array of imagePullSecrets.

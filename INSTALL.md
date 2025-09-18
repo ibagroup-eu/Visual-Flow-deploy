@@ -59,7 +59,7 @@ helm repo add bitnami https://charts.bitnami.com/bitnami
 helm repo update
 ```
 
-- Clone VF repo and change dir on Visual-Flow-deploy/charts/dbs
+- Clone [Minikube branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/minikube) and go to Visual-Flow-deploy/charts/dbs
 ```bash
 git clone -b minikube https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-deploy
 
@@ -67,12 +67,14 @@ cd Visual-Flow-deploy/charts/dbs
 ```
 
 1. Redis (for Session and Job's execution history)
-
-`helm install redis -f bitnami-redis/values.yaml bitnami/redis`
+```bash
+helm install redis -f bitnami-redis/values.yaml bitnami/redis
+```
 
 2. PostgreSQL (History service)
-
-`helm install pgserver -f bitnami-postgresql/values.yaml bitnami/postgresql`
+```bash
+helm install pgserver -f bitnami-postgresql/values.yaml bitnami/postgresql
+```
 
 - Check that both services Ready and Running
 ```bash
@@ -83,19 +85,26 @@ redis-master-0          1/1     Running   0          3m23s
 ```
 FYI: Just in case better to save output of these command (it contains helpful info with short guide how to get access to pod & dbs and show default credentials).
 
+Go back to your main folder to proceed with Visual Flow installation
+```bash
+cd ../../..
+```
+
 ## Install Visual Flow
 
-1. Clone (or download) the [Minikube branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/minikube) on your local computer using following command:
-
-    `git clone -b minikube https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-deploy`
+1. Make sure you already have the [Minikube branch from Visual-Flow-deploy repository](https://github.com/ibagroup-eu/Visual-Flow-deploy/tree/minikube) on your local computer, if no - clone it using the following command:
+```bash
+git clone -b minikube https://github.com/ibagroup-eu/Visual-Flow-deploy.git Visual-Flow-deploy
+```
 
 2. Go to the directory "[visual-flow](https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/minikube/charts/visual-flow)" of the downloaded "Visual-Flow-Deploy" repository with the following command:
+```bash
+cd Visual-Flow-deploy/charts/visual-flow
+```
 
-    `cd Visual-Flow-deploy/charts/visual-flow`
+3. *(Optional)*. Configure Slack notifications in [values.yaml](./charts/visual-flow/values.yaml) using following guide:
 
-3. *(Optional)* Configure Slack notifications in [values.yaml](./charts/visual-flow/values.yaml) using following guide:
-
-    <https://github.com/ibagroup-eu/Visual-Flow-deploy/blob/main/SLACK_NOTIFICATION.md>
+   [Configure Slack notification](./SLACK_NOTIFICATION.md)
 
 4. Set superusers in [values.yaml](./charts/visual-flow/values.yaml).
 
@@ -157,15 +166,21 @@ FYI: Just in case better to save output of these command (it contains helpful in
 
 7. Install the app using the updated [values.yaml](./charts/visual-flow/values.yaml) file with the following command:
 
-    `helm upgrade -i vf-app . -f values.yaml`
+    ```bash
+    helm upgrade -i vf-app . -f values.yaml
+    ```
 
 8. Check that the app is successfully installed and all pods are running with the following command:
 
-    `kubectl get pods -A`
+    ```bash
+    kubectl get pods -A
+    ```
 
 9. Get the IP of your cluster with following command:
 
-    `minikube ip`
+    ```bash
+    minikube ip
+    ```
 
     Replace the string `<HOSTNAME_FROM_SERVICE>` with the generated hostname in the next steps.
 
@@ -180,15 +195,19 @@ FYI: Just in case better to save output of these command (it contains helpful in
     5. Replace "DUMMY_ID" with the Client ID value in [values.yaml](./charts/visual-flow/values.yaml).
     6. Click **Generate a new client secret** and replace in [values.yaml](./charts/visual-flow/values.yaml) "DUMMY_SECRET" with the generated Client secret value (Please note that you will not be able to see the full secret value later).
 
-11. Update 'host' (`host: https://<HOSTNAME_FROM_SERVICE>/vf/ui/`) and 'STRATEGY_CALLBACK_URL' (`STRATEGY_CALLBACK_URL: https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`) values in [values.yaml](./charts/visual-flow/values.yaml). 
+11. Update 'uiHost' (`uiHost: https://<HOSTNAME_FROM_SERVICE>`) and 'STRATEGY_CALLBACK_URL' (`STRATEGY_CALLBACK_URL: https://<HOSTNAME_FROM_SERVICE>/vf/ui/callback`) values in [values.yaml](./charts/visual-flow/values.yaml). 
 
 12. Upgrade release using updated 'values.yaml':
 
-    `helm upgrade vf-app . -f values.yaml`
+    ```bash
+    helm upgrade vf-app . -f values.yaml
+    ```
 
 13. Wait until the update is installed and all pods are running:
 
-    `kubectl get pods -A`
+    ```bash
+    kubectl get pods -A
+    ```
 
 ## Use Visual Flow
 
