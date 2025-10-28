@@ -9,7 +9,7 @@ backend:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-backend
       pullPolicy: IfNotPresent
     # variables:
@@ -41,7 +41,7 @@ backend:
       port: 8080
     notifications:
       uiHost: []
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-notification-service
       slack:
         token: BOT_TOKEN
@@ -78,7 +78,7 @@ backend:
         secondsAfterSuccess: 5
         secondsAfterFailure: 360
     sparkJob:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-spark-job
       pullPolicy: IfNotPresent
       jobSA: spark
@@ -119,7 +119,7 @@ frontend:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-frontend
       pullPolicy: IfNotPresent
     variables:
@@ -173,7 +173,7 @@ dbservice:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -191,7 +191,7 @@ historyserv:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
       tag: 1.5.0-backend-history-service
       pullPolicy: IfNotPresent
   service:
