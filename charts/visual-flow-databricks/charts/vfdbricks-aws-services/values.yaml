@@ -11,7 +11,7 @@ databricks:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow-databricks
       tag: 0.2.1-vf-databricks
       pullPolicy: Always
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -98,7 +98,7 @@ frontend: # frontend part of app
     replicas: 1
     serviceAccountName: vfdbricks-aws-app-databricks-user
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow-databricks
       tag: 0.2.1-vf-frontend
       pullPolicy: Always
     # cmd: "(cd /app/json-server && npm run start) & npm run start:prod"
@@ -142,7 +142,7 @@ jobstorage:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow-databricks
       tag: 0.2.1-vf-backend-job-storage-service
       pullPolicy: Always # IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
@@ -181,7 +181,7 @@ historyserv:
   deployment:
     replicas: 1
     image:
-      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group/visual-flow-databricks
+      repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow-databricks
       tag: 0.2.1-vf-databricks-history-service
       pullPolicy: Always # IfNotPresent
   configFile:
