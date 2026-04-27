@@ -10,7 +10,7 @@ backend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-backend
+      tag: 1.5.0b-backend
       pullPolicy: IfNotPresent
     # variables:
     secretVariables:
@@ -42,7 +42,7 @@ backend:
     notifications:
       uiHost: []
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-notification-service
+      tag: 1.5.0b-notification-service
       slack:
         token: BOT_TOKEN
         channelName: CHANNEL_NAME
@@ -79,7 +79,7 @@ backend:
         secondsAfterFailure: 360
     sparkJob:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-spark-job
+      tag: 1.5.0b-spark-job
       pullPolicy: IfNotPresent
       jobSA: spark
       jobRB: spark-edit
@@ -120,7 +120,7 @@ frontend:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-frontend
+      tag: 1.5.0b-frontend
       pullPolicy: IfNotPresent
     variables:
       STRATEGY: GITHUB
@@ -174,7 +174,7 @@ dbservice:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-backend-db-service
+      tag: 1.5.0b-backend-db-service
       pullPolicy: IfNotPresent
     # cmd: "sh ./generate_keystore_p12.sh; java -Xms1g -Xmx8g -jar vf-api.jar --spring.config.location=file:/config/application.yaml"
   service:
@@ -192,7 +192,7 @@ historyserv:
     replicas: 1
     image:
       repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/iba-group-a-s/visual-flow
-      tag: 1.5.0a-backend-history-service
+      tag: 1.5.0b-backend-history-service
       pullPolicy: IfNotPresent
   service:
     type: ClusterIP
